@@ -62,6 +62,7 @@ interface AppActions {
   modifierStatutDocument: (id: string, statut: StatutDemande) => void
   
   // Notifications
+  definirNotifications: (notifications: Notification[]) => void
   ajouterNotification: (notification: Omit<Notification, 'id' | 'dateCreation'>) => void
   marquerCommeLu: (id: string) => void
   supprimerNotification: (id: string) => void
@@ -159,6 +160,8 @@ export const useAppStore = create<AppState & AppActions>()(
       })),
 
       // Actions notifications
+      definirNotifications: (notifications) => set({ notifications }),
+      
       ajouterNotification: (notification) => set((state) => ({
         notifications: [
           {

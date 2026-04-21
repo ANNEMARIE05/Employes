@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   FileText, 
@@ -12,6 +12,8 @@ import {
   Search,
   File,
   FileCheck,
+  Filter,
+  X,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { 
@@ -29,6 +31,15 @@ import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { FormulaireDocument } from './formulaire-document'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from '@/components/ui/pagination'
 
 const ICONES_DOCUMENT: Record<TypeDocument, React.ReactNode> = {
   attestation_emploi: <FileCheck className="w-5 h-5" />,
@@ -39,24 +50,73 @@ const ICONES_DOCUMENT: Record<TypeDocument, React.ReactNode> = {
   attestation_pole_emploi: <FileCheck className="w-5 h-5" />,
 }
 
+const ELEMENTS_PAR_PAGE = 5
+
 export function PageDocuments() {
   const [recherche, setRecherche] = useState('')
+  const [filtreStatut, setFiltreStatut] = useState<string>('')
+  const [filtreType, setFiltreType] = useState<string>('')
   const [formulaireOuvert, setFormulaireOuvert] = useState(false)
+  const [pageActuelle, setPageActuelle] = useState(1)
 
   const demandesEnrichies = enrichirDemandesDocuments(demandesDocumentsMock)
 
   // Filtrer
-  const demandesFiltrees = demandesEnrichies.filter(demande => {
-    return recherche === '' || 
-      `${demande.employe?.prenom} ${demande.employe?.nom}`.toLowerCase().includes(recherche.toLowerCase()) ||
-      LABELS_TYPE_DOCUMENT[demande.typeDocument].toLowerCase().includes(recherche.toLowerCase())
-  })
+  const demandesFiltrees = useMemo(() => {
+    return demandesEnrichies.filter(demande => {
+      const correspondRecherche = recherche === '' || 
+        `${demande.employe?.prenom} ${demande.employe?.nom}`.toLowerCase().includes(recherche.toLowerCase()) ||
+        LABELS_TYPE_DOCUMENT[demande.typeDocument].toLowerCase().includes(recherche.toLowerCase())
+      const correspondStatut = !filtreStatut || demande.statut === filtreStatut
+      const correspondType = !filtreType || demande.typeDocument === filtreType
+      return correspondRecherche && correspondStatut && correspondType
+    })
+  }, [demandesEnrichies, recherche, filtreStatut, filtreType])
+
+  // Pagination
+  const totalPages = Math.ceil(demandesFiltrees.length / ELEMENTS_PAR_PAGE)
+  const demandesPaginees = useMemo(() => {
+    const debut = (pageActuelle - 1) * ELEMENTS_PAR_PAGE
+    return demandesFiltrees.slice(debut, debut + ELEMENTS_PAR_PAGE)
+  }, [demandesFiltrees, pageActuelle])
+
+  // Reset page when filters change
+  const handleFiltreChange = <T,>(setter: (value: T) => void, value: T) => {
+    setter(value)
+    setPageActuelle(1)
+  }
 
   // Stats
   const stats = {
     total: demandesEnrichies.length,
     enAttente: demandesEnrichies.filter(d => d.statut === 'en_attente').length,
     traites: demandesEnrichies.filter(d => d.statut === 'approuve').length,
+  }
+
+  const reinitialiserFiltres = () => {
+    setRecherche('')
+    setFiltreStatut('')
+    setFiltreType('')
+    setPageActuelle(1)
+  }
+
+  const filtresActifs = recherche || filtreStatut || filtreType
+
+  // Generate page numbers
+  const generatePageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = []
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i)
+    } else {
+      pages.push(1)
+      if (pageActuelle > 3) pages.push('ellipsis')
+      const start = Math.max(2, pageActuelle - 1)
+      const end = Math.min(totalPages - 1, pageActuelle + 1)
+      for (let i = start; i <= end; i++) pages.push(i)
+      if (pageActuelle < totalPages - 2) pages.push('ellipsis')
+      pages.push(totalPages)
+    }
+    return pages
   }
 
   return (
@@ -93,28 +153,66 @@ export function PageDocuments() {
           </div>
           <div>
             <p className="text-2xl font-semibold">{stats.traites}</p>
-            <p className="text-sm text-muted-foreground">Traités</p>
+            <p className="text-sm text-muted-foreground">Traites</p>
           </div>
         </div>
       </motion.div>
 
-      {/* Recherche */}
+      {/* Recherche et filtres */}
       <motion.div
-        className="flex gap-4 items-center"
+        className="flex flex-wrap gap-4 items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
       >
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 min-w-[200px] max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Rechercher une demande..."
             value={recherche}
-            onChange={(e) => setRecherche(e.target.value)}
+            onChange={(e) => handleFiltreChange(setRecherche, e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
+
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <select
+            value={filtreType}
+            onChange={(e) => handleFiltreChange(setFiltreType, e.target.value)}
+            className="pl-10 pr-8 py-2.5 bg-card border border-border rounded-sm text-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            <option value="">Tous les types</option>
+            {Object.entries(LABELS_TYPE_DOCUMENT).map(([key, label]) => (
+              <option key={key} value={key}>{label}</option>
+            ))}
+          </select>
+        </div>
+
+        <select
+          value={filtreStatut}
+          onChange={(e) => handleFiltreChange(setFiltreStatut, e.target.value)}
+          className="px-4 py-2.5 bg-card border border-border rounded-sm text-sm appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-primary"
+        >
+          <option value="">Tous les statuts</option>
+          {Object.entries(LABELS_STATUT).map(([key, label]) => (
+            <option key={key} value={key}>{label}</option>
+          ))}
+        </select>
+
+        {/* Bouton reinitialiser */}
+        {filtresActifs && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={reinitialiserFiltres}
+            className="gap-2 rounded-sm text-muted-foreground"
+          >
+            <X className="w-4 h-4" />
+            Effacer
+          </Button>
+        )}
       </motion.div>
 
       {/* Types de documents disponibles */}
@@ -147,6 +245,18 @@ export function PageDocuments() {
         </div>
       </motion.div>
 
+      {/* Info resultats */}
+      <div className="flex items-center justify-between text-sm text-muted-foreground">
+        <span>
+          {demandesFiltrees.length} demande{demandesFiltrees.length > 1 ? 's' : ''} trouvee{demandesFiltrees.length > 1 ? 's' : ''}
+        </span>
+        {totalPages > 1 && (
+          <span>
+            Page {pageActuelle} sur {totalPages}
+          </span>
+        )}
+      </div>
+
       {/* Liste des demandes */}
       <motion.div
         className="space-y-3"
@@ -157,7 +267,7 @@ export function PageDocuments() {
         <h3 className="font-medium">Historique des demandes</h3>
         
         <AnimatePresence mode="popLayout">
-          {demandesFiltrees.map((demande, index) => (
+          {demandesPaginees.map((demande, index) => (
             <motion.div
               key={demande.id}
               className="flex flex-col sm:flex-row sm:items-center gap-4 p-5 bg-card border border-border rounded-sm hover:border-primary/30 transition-colors"
@@ -167,7 +277,7 @@ export function PageDocuments() {
               transition={{ delay: index * 0.05 }}
               layout
             >
-              {/* Icône document */}
+              {/* Icone document */}
               <div className="p-3 bg-muted rounded-sm shrink-0">
                 {ICONES_DOCUMENT[demande.typeDocument]}
               </div>
@@ -184,11 +294,11 @@ export function PageDocuments() {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Demandé par {demande.employe?.prenom} {demande.employe?.nom} • {format(parseISO(demande.dateCreation), 'd MMMM yyyy', { locale: fr })}
+                  Demande par {demande.employe?.prenom} {demande.employe?.nom} - {format(parseISO(demande.dateCreation), 'd MMMM yyyy', { locale: fr })}
                 </p>
                 {demande.commentaire && (
                   <p className="text-sm text-muted-foreground mt-1">
-                    "{demande.commentaire}"
+                    &quot;{demande.commentaire}&quot;
                   </p>
                 )}
               </div>
@@ -202,7 +312,7 @@ export function PageDocuments() {
                     whileTap={{ scale: 0.98 }}
                   >
                     <Download className="w-4 h-4" />
-                    Télécharger
+                    Telecharger
                   </motion.button>
                 )}
                 {demande.statut === 'en_attente' && (
@@ -235,10 +345,65 @@ export function PageDocuments() {
             animate={{ opacity: 1 }}
           >
             <FileText className="w-12 h-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground">Aucune demande trouvée</p>
+            <p className="text-muted-foreground">Aucune demande trouvee</p>
           </motion.div>
         )}
       </motion.div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex justify-center"
+        >
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (pageActuelle > 1) setPageActuelle(pageActuelle - 1)
+                  }}
+                  className={pageActuelle === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                />
+              </PaginationItem>
+              
+              {generatePageNumbers().map((page, index) => (
+                <PaginationItem key={index}>
+                  {page === 'ellipsis' ? (
+                    <PaginationEllipsis />
+                  ) : (
+                    <PaginationLink
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        setPageActuelle(page)
+                      }}
+                      isActive={pageActuelle === page}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  )}
+                </PaginationItem>
+              ))}
+              
+              <PaginationItem>
+                <PaginationNext 
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (pageActuelle < totalPages) setPageActuelle(pageActuelle + 1)
+                  }}
+                  className={pageActuelle === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </motion.div>
+      )}
 
       {/* Modal formulaire */}
       <AnimatePresence>

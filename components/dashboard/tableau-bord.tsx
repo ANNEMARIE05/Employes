@@ -132,33 +132,33 @@ export function TableauBord() {
         className="grid grid-cols-1 sm:grid-cols-3 gap-4"
         variants={itemVariants}
       >
-        <div className="p-5 bg-card border border-border h-[100px] flex items-center gap-4">
-          <div className="p-3 bg-success/10">
+        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
+          <div className="p-3 bg-success/10 shrink-0">
             <CheckCircle className="w-5 h-5 text-success" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-semibold">{stats.congesApprouvesCeMois}</p>
-            <p className="text-sm text-muted-foreground">Congés approuvés ce mois</p>
+            <p className="text-sm text-muted-foreground truncate">Congés approuvés ce mois</p>
           </div>
         </div>
         
-        <div className="p-5 bg-card border border-border h-[100px] flex items-center gap-4">
-          <div className="p-3 bg-primary/10">
+        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
+          <div className="p-3 bg-primary/10 shrink-0">
             <FileText className="w-5 h-5 text-primary" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-semibold">{stats.documentsTraitesCeMois}</p>
-            <p className="text-sm text-muted-foreground">Documents traités</p>
+            <p className="text-sm text-muted-foreground truncate">Documents traités</p>
           </div>
         </div>
         
-        <div className="p-5 bg-card border border-border h-[100px] flex items-center gap-4">
-          <div className="p-3 bg-warning/10">
+        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
+          <div className="p-3 bg-warning/10 shrink-0">
             <AlertCircle className="w-5 h-5 text-warning" />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="text-2xl font-semibold">3</p>
-            <p className="text-sm text-muted-foreground">Contrats à renouveler</p>
+            <p className="text-sm text-muted-foreground truncate">Contrats à renouveler</p>
           </div>
         </div>
       </motion.div>
