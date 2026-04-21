@@ -112,7 +112,7 @@ export function MonProfil() {
     >
       {/* Carte profil principale */}
       <motion.div
-        className="bg-card border border-border rounded-sm overflow-hidden"
+        className="luxury-panel overflow-hidden rounded-xl"
         variants={itemVariants}
       >
         {/* Banniere */}
@@ -184,7 +184,7 @@ export function MonProfil() {
         className="grid grid-cols-2 sm:grid-cols-4 gap-4"
         variants={itemVariants}
       >
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-success/10 rounded-sm">
               <CalendarDays className="w-5 h-5 text-success" />
@@ -196,7 +196,7 @@ export function MonProfil() {
           </div>
         </div>
         
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-sm">
               <Clock className="w-5 h-5 text-primary" />
@@ -208,7 +208,7 @@ export function MonProfil() {
           </div>
         </div>
         
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-warning/10 rounded-sm">
               <TrendingUp className="w-5 h-5 text-warning" />
@@ -220,7 +220,7 @@ export function MonProfil() {
           </div>
         </div>
         
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-muted rounded-sm">
               <FileText className="w-5 h-5 text-muted-foreground" />
@@ -237,7 +237,7 @@ export function MonProfil() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Informations de contact */}
         <motion.div
-          className="p-6 bg-card border border-border rounded-sm lg:col-span-1"
+          className="luxury-panel rounded-xl p-6 lg:col-span-1"
           variants={itemVariants}
         >
           <h3 className="font-semibold mb-4 flex items-center gap-2">
@@ -302,7 +302,7 @@ export function MonProfil() {
 
         {/* Historique recent */}
         <motion.div
-          className="p-6 bg-card border border-border rounded-sm lg:col-span-2"
+          className="luxury-panel rounded-xl p-6 lg:col-span-2"
           variants={itemVariants}
         >
           <div className="flex items-center justify-between mb-4">
@@ -389,7 +389,7 @@ export function MonProfil() {
 
       {/* Mes documents */}
       <motion.div
-        className="p-6 bg-card border border-border rounded-sm"
+        className="luxury-panel rounded-xl p-6"
         variants={itemVariants}
       >
         <div className="flex items-center justify-between mb-4">

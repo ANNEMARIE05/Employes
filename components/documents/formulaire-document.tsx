@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { AppModalPortal, AppModalShell } from '@/components/ui/app-modal'
 import { X, FileText, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { LABELS_TYPE_DOCUMENT, type TypeDocument } from '@/types'
@@ -34,15 +35,10 @@ export function FormulaireDocument({ onFermer, afficherSelectionEmploye = false 
   }
 
   return (
-    <motion.div
-      className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      onClick={onFermer}
-    >
+    <AppModalPortal>
+      <AppModalShell onOverlayClick={onFermer} panelClassName="max-w-lg">
       <motion.div
-        className="bg-card border border-border rounded-sm w-full max-w-lg shadow-xl my-auto max-h-[calc(100vh-2rem)] overflow-y-auto"
+        className="w-full max-h-[min(90dvh,calc(100vh-6rem))] overflow-y-auto rounded-md border border-border bg-card shadow-xl"
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -164,6 +160,7 @@ export function FormulaireDocument({ onFermer, afficherSelectionEmploye = false 
           </div>
         </form>
       </motion.div>
-    </motion.div>
+      </AppModalShell>
+    </AppModalPortal>
   )
 }

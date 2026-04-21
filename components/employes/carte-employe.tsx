@@ -26,7 +26,7 @@ export function CarteEmploye({ employe, index, onVoirDetail, onModifier }: Carte
 
   return (
     <motion.div
-      className="group p-5 bg-card border border-border rounded-sm hover:border-primary/30 hover:shadow-sm transition-all duration-300"
+      className="luxury-panel group rounded-xl p-5 transition-all duration-300 hover:border-primary/40 hover:shadow-md"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, duration: 0.4 }}

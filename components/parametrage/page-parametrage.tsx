@@ -126,7 +126,7 @@ export function PageParametrage() {
 
       {/* Tabs */}
       <motion.div
-        className="flex flex-wrap gap-2 p-1 bg-muted"
+        className="luxury-panel flex flex-wrap gap-2 rounded-xl p-1.5"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
@@ -136,10 +136,10 @@ export function PageParametrage() {
             key={onglet.id}
             onClick={() => setOngletActif(onglet.id)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2.5 text-sm font-medium transition-all',
+              'flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all',
               ongletActif === onglet.id
-                ? 'bg-card text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
+                ? 'bg-primary/15 text-foreground shadow-sm'
+                : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
             )}
           >
             {onglet.icone}
@@ -268,7 +268,7 @@ function ListeParametrage({ elements, setElements, avecCouleur, avecJours }: Lis
       <AnimatePresence>
         {formulaireOuvert && (
           <motion.div
-            className="p-5 bg-card border border-border space-y-4"
+            className="luxury-panel space-y-4 rounded-xl p-5"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -344,7 +344,7 @@ function ListeParametrage({ elements, setElements, avecCouleur, avecJours }: Lis
       </AnimatePresence>
 
       {/* Liste */}
-      <div className="bg-card border border-border overflow-hidden">
+      <div className="luxury-panel overflow-hidden rounded-xl">
         <div className="divide-y divide-border">
           {elements.map((element, index) => (
             <motion.div

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
+import { AppModalPortal, AppModalShell } from '@/components/ui/app-modal'
 import { AlertTriangle, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -43,17 +44,16 @@ export function ModalConfirmation({
   }
 
   return (
-    <AnimatePresence>
-      {ouvert && (
-        <motion.div
-          className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto bg-foreground/20 backdrop-blur-sm"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={onFermer}
-        >
+    <AppModalPortal>
+      <AnimatePresence>
+        {ouvert && (
+          <AppModalShell
+            key="modal-confirmation"
+            onOverlayClick={onFermer}
+            panelClassName="max-w-md"
+          >
           <motion.div
-            className="w-full max-w-md bg-card border border-border rounded-sm shadow-xl overflow-hidden my-auto"
+            className="luxury-panel overflow-hidden rounded-md shadow-xl"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -104,8 +104,9 @@ export function ModalConfirmation({
               </Button>
             </div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+          </AppModalShell>
+        )}
+      </AnimatePresence>
+    </AppModalPortal>
   )
 }

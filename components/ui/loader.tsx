@@ -130,7 +130,7 @@ export function Loader({
 // Skeleton loader pour les cartes
 export function SkeletonCard({ className }: { className?: string }) {
   return (
-    <div className={cn('p-6 bg-card border border-border rounded-sm', className)}>
+    <div className={cn('luxury-panel rounded-xl p-6', className)}>
       <div className="space-y-4">
         <div className="animate-shimmer h-4 w-1/3 rounded-sm" />
         <div className="space-y-2">
@@ -170,7 +170,7 @@ export function SkeletonTable({ lignes = 5 }: { lignes?: number }) {
 export function LoaderPleinEcran({ texte = 'Chargement...' }: { texte?: string }) {
   return (
     <motion.div
-      className="fixed inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-50"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-background/80 backdrop-blur-sm"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

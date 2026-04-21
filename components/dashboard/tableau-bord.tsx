@@ -18,6 +18,7 @@ import {
   XCircle,
 } from 'lucide-react'
 import { CounterCard } from '@/components/ui/animated-number'
+import { Card, CardContent } from '@/components/ui/card'
 import { GraphiqueEffectif } from './graphique-effectif'
 import { GraphiqueDepartements } from './graphique-departements'
 import { DemandesRecentes } from './demandes-recentes'
@@ -74,7 +75,7 @@ export function TableauBord() {
   const actionsRapides = [
     { 
       id: 'conges', 
-      label: 'Gerer les conges', 
+      label: 'Gerer les conges RH', 
       icone: <Calendar className="w-5 h-5" />, 
       count: congesEnAttente,
       couleur: 'bg-primary/10 text-primary hover:bg-primary/20',
@@ -82,7 +83,7 @@ export function TableauBord() {
     },
     { 
       id: 'documents', 
-      label: 'Traiter documents', 
+      label: 'Traiter les documents', 
       icone: <FileText className="w-5 h-5" />, 
       count: documentsEnAttente,
       couleur: 'bg-success/10 text-success hover:bg-success/20',
@@ -115,63 +116,88 @@ export function TableauBord() {
     >
       {/* Banniere de bienvenue RH */}
       <motion.div
-        className="bg-card text-card-foreground border border-border rounded-sm p-4 sm:p-6"
+        className="text-card-foreground"
         variants={itemVariants}
       >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <img
-              src={utilisateurConnecte?.avatar}
-              alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
-              className="w-16 h-16 rounded-sm object-cover border border-border hidden sm:block"
-            />
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs px-2 py-0.5 bg-primary/15 text-primary font-medium rounded-sm">
-                  Espace RH
-                </span>
-                <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground font-medium rounded-sm">
-                  Administrateur
-                </span>
+        <Card className="luxury-panel py-0">
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_1fr]">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <img
+                    src={utilisateurConnecte?.avatar}
+                    alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
+                    className="hidden h-16 w-16 rounded-xl border border-border/70 object-cover shadow-sm sm:block"
+                  />
+                  <div>
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <span className="data-chip text-primary">Espace RH Premium</span>
+                      <span className="data-chip text-muted-foreground">Role: Administrateur RH</span>
+                      <span className="data-chip text-success">{stats.employesActifs} employes actifs</span>
+                    </div>
+                    <h2 className="mb-1 text-lg font-semibold sm:text-2xl">
+                      Bonjour {utilisateurConnecte?.prenom || 'Utilisateur'},
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {totalEnAttente > 0 ? (
+                        <>
+                          Vous avez <span className="font-medium text-primary">{totalEnAttente} demande{totalEnAttente > 1 ? 's' : ''}</span> a traiter aujourd&apos;hui
+                        </>
+                      ) : (
+                        'Excellente nouvelle: toutes les demandes ont ete traitees'
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <Card className="py-0">
+                    <CardContent className="px-4 py-3">
+                    <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">Conges en attente</p>
+                    <p className="mt-1 text-2xl font-semibold text-primary">{congesEnAttente}</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="py-0">
+                    <CardContent className="px-4 py-3">
+                    <p className="text-xs uppercase tracking-[0.08em] text-muted-foreground">Documents en attente</p>
+                    <p className="mt-1 text-2xl font-semibold text-success">{documentsEnAttente}</p>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
-              <h2 className="text-lg sm:text-xl font-semibold mb-1">
-                Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                {totalEnAttente > 0 ? (
-                  <>
-                    Vous avez <span className="text-primary font-medium">{totalEnAttente} demande{totalEnAttente > 1 ? 's' : ''}</span> a traiter aujourd&apos;hui
-                  </>
-                ) : (
-                  'Toutes les demandes ont ete traitees'
-                )}
-              </p>
+
+              <div>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+                  Actions rapides
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                {actionsRapides.map((action) => (
+                  <Card key={action.id} className="py-0">
+                    <CardContent className="p-0">
+                      <button
+                        onClick={() => definirOngletActif(action.id)}
+                        className="group min-h-[94px] w-full rounded-xl px-3 py-3 text-left transition-all duration-200 hover:-translate-y-0.5 hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                      >
+                        <div className="mb-2 flex items-center justify-between gap-2">
+                          <span className="shrink-0 text-primary">{action.icone}</span>
+                          {action.count !== null && (
+                            <span className="rounded-full px-2 py-0.5 text-xs font-semibold bg-primary/15 text-primary">
+                              {action.count}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm font-medium leading-tight text-foreground">
+                          {action.label}
+                        </div>
+                      </button>
+                    </CardContent>
+                  </Card>
+                ))}
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Actions rapides */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full lg:w-auto">
-            {actionsRapides.map((action) => (
-              <button
-                key={action.id}
-                onClick={() => definirOngletActif(action.id)}
-                className="group min-h-[74px] rounded-sm border border-border bg-background px-3 py-2 text-left transition-colors duration-200 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-              >
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="shrink-0 text-primary">{action.icone}</span>
-                  {action.count !== null && (
-                    <span className="rounded-sm px-1.5 py-0.5 text-xs font-medium bg-primary/15 text-primary">
-                      {action.count}
-                    </span>
-                  )}
-                </div>
-                <div className="text-sm font-medium leading-tight text-foreground">
-                  {action.label}
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       </motion.div>
 
       {/* Cartes statistiques */}
@@ -220,13 +246,13 @@ export function TableauBord() {
           variants={itemVariants}
         >
           {/* Conges en attente */}
-          <div className="p-4 sm:p-5 bg-card border border-border rounded-sm">
+          <div className="luxury-panel rounded-2xl p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <CalendarClock className="w-5 h-5 text-primary" />
                 Conges en attente
                 {congesEnAttente > 0 && (
-                  <span className="text-xs px-2 py-0.5 bg-warning/20 text-warning rounded-sm">
+                  <span className="data-chip text-warning">
                     {congesEnAttente}
                   </span>
                 )}
@@ -246,12 +272,12 @@ export function TableauBord() {
                 {dernieresDemandesConges.map((demande) => (
                   <div 
                     key={demande.id}
-                    className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-muted/50 rounded-sm"
+                    className="flex items-center gap-2 sm:gap-3 rounded-xl border border-border/60 bg-muted/35 p-2.5 sm:p-3"
                   >
                     <img
                       src={demande.employe?.avatar}
                       alt={`${demande.employe?.prenom} ${demande.employe?.nom}`}
-                      className="w-10 h-10 rounded-sm object-cover"
+                      className="h-10 w-10 rounded-lg object-cover border border-border/60"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">
@@ -277,13 +303,13 @@ export function TableauBord() {
           </div>
 
           {/* Documents en attente */}
-          <div className="p-4 sm:p-5 bg-card border border-border rounded-sm">
+          <div className="luxury-panel rounded-2xl p-4 sm:p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <FileSearch className="w-5 h-5 text-success" />
                 Documents en attente
                 {documentsEnAttente > 0 && (
-                  <span className="text-xs px-2 py-0.5 bg-warning/20 text-warning rounded-sm">
+                  <span className="data-chip text-warning">
                     {documentsEnAttente}
                   </span>
                 )}
@@ -303,12 +329,12 @@ export function TableauBord() {
                 {dernieresDemandesDocuments.map((demande) => (
                   <div 
                     key={demande.id}
-                    className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-muted/50 rounded-sm"
+                    className="flex items-center gap-2 sm:gap-3 rounded-xl border border-border/60 bg-muted/35 p-2.5 sm:p-3"
                   >
                     <img
                       src={demande.employe?.avatar}
                       alt={`${demande.employe?.prenom} ${demande.employe?.nom}`}
-                      className="w-10 h-10 rounded-sm object-cover"
+                      className="h-10 w-10 rounded-lg object-cover border border-border/60"
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm truncate">
@@ -363,8 +389,8 @@ export function TableauBord() {
         className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4"
         variants={itemVariants}
       >
-        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
-          <div className="p-2 sm:p-3 bg-success/10 shrink-0">
+        <div className="stat-card flex min-h-[96px] items-center gap-3 overflow-hidden rounded-xl p-4 sm:min-h-[100px] sm:gap-4 sm:p-5">
+          <div className="rounded-xl p-2 sm:p-3 bg-success/10 shrink-0">
             <CheckCircle className="w-5 h-5 text-success" />
           </div>
           <div className="min-w-0">
@@ -373,8 +399,8 @@ export function TableauBord() {
           </div>
         </div>
         
-        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
-          <div className="p-2 sm:p-3 bg-destructive/10 shrink-0">
+        <div className="stat-card flex min-h-[96px] items-center gap-3 overflow-hidden rounded-xl p-4 sm:min-h-[100px] sm:gap-4 sm:p-5">
+          <div className="rounded-xl p-2 sm:p-3 bg-destructive/10 shrink-0">
             <XCircle className="w-5 h-5 text-destructive" />
           </div>
           <div className="min-w-0">
@@ -383,8 +409,8 @@ export function TableauBord() {
           </div>
         </div>
         
-        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
-          <div className="p-2 sm:p-3 bg-primary/10 shrink-0">
+        <div className="stat-card flex min-h-[96px] items-center gap-3 overflow-hidden rounded-xl p-4 sm:min-h-[100px] sm:gap-4 sm:p-5">
+          <div className="rounded-xl p-2 sm:p-3 bg-primary/10 shrink-0">
             <FileText className="w-5 h-5 text-primary" />
           </div>
           <div className="min-w-0">
@@ -393,8 +419,8 @@ export function TableauBord() {
           </div>
         </div>
         
-        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
-          <div className="p-2 sm:p-3 bg-warning/10 shrink-0">
+        <div className="stat-card flex min-h-[96px] items-center gap-3 overflow-hidden rounded-xl p-4 sm:min-h-[100px] sm:gap-4 sm:p-5">
+          <div className="rounded-xl p-2 sm:p-3 bg-warning/10 shrink-0">
             <AlertCircle className="w-5 h-5 text-warning" />
           </div>
           <div className="min-w-0">

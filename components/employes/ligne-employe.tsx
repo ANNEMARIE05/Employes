@@ -27,7 +27,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
 
   return (
     <motion.div
-      className="grid grid-cols-12 gap-4 p-4 border-b border-border last:border-0 hover:bg-muted/30 transition-colors items-center group"
+      className="list-row-luxe grid grid-cols-12 items-center gap-4 border-b border-border/60 px-5 py-3.5 last:border-0 transition-all duration-300 hover:bg-muted/25 group"
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.03 }}
@@ -37,7 +37,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
         <img
           src={employe.avatar}
           alt={`${employe.prenom} ${employe.nom}`}
-          className="w-10 h-10 rounded-sm object-cover"
+          className="h-11 w-11 rounded-lg border border-border/60 object-cover shadow-sm"
         />
         <div className="min-w-0">
           <p 
@@ -63,7 +63,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
       {/* Statut */}
       <div className="col-span-2">
         <span className={cn(
-          'inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded-sm',
+          'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium',
           statutInfo.classe
         )}>
           <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -75,7 +75,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
       <div className="col-span-2 flex justify-end gap-1">
         <motion.button
           onClick={onVoirDetail}
-          className="p-2 rounded-sm hover:bg-muted opacity-0 group-hover:opacity-100 transition-all"
+          className="rounded-md p-2 opacity-0 transition-all hover:bg-muted group-hover:opacity-100"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           title="Voir detail"
@@ -84,7 +84,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
         </motion.button>
         <motion.button
           onClick={onModifier}
-          className="p-2 rounded-sm hover:bg-muted opacity-0 group-hover:opacity-100 transition-all"
+          className="rounded-md p-2 opacity-0 transition-all hover:bg-muted group-hover:opacity-100"
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           title="Modifier"
@@ -93,7 +93,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
         </motion.button>
         <div className="relative">
           <motion.button
-            className="p-2 rounded-sm hover:bg-muted opacity-0 group-hover:opacity-100 transition-all"
+            className="rounded-md p-2 opacity-0 transition-all hover:bg-muted group-hover:opacity-100"
             onClick={() => setMenuOuvert(!menuOuvert)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
@@ -108,7 +108,7 @@ export function LigneEmploye({ employe, index, onVoirDetail, onModifier, onSuppr
                 onClick={() => setMenuOuvert(false)}
               />
               <motion.div
-                className="absolute right-0 top-full mt-1 py-1 bg-popover border border-border rounded-sm shadow-lg z-20 min-w-[120px]"
+                className="absolute right-0 top-full z-20 mt-1 min-w-[140px] rounded-lg border border-border/70 bg-popover/95 py-1 shadow-xl backdrop-blur"
                 initial={{ opacity: 0, y: -5 }}
                 animate={{ opacity: 1, y: 0 }}
               >

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { AppModalPortal, AppModalShell } from '@/components/ui/app-modal'
 import { X, Save, User, Mail, Phone, Building2, Briefcase, Calendar } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Loader } from '@/components/ui/loader'
@@ -73,25 +74,11 @@ export function ModalEmploye({ employe, mode, onFermer, onSauvegarder }: ModalEm
   }
 
   return (
-    <AnimatePresence>
-      <motion.div
-        className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-      >
-        {/* Overlay */}
+    <AppModalPortal>
+      <AnimatePresence>
+        <AppModalShell key="modal-employe" onOverlayClick={onFermer} panelClassName="max-w-2xl">
         <motion.div
-          className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
-          onClick={onFermer}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        />
-
-        {/* Modal */}
-        <motion.div
-          className="relative w-full max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto bg-card border border-border rounded-sm shadow-xl my-auto"
+          className="w-full max-h-[min(90dvh,calc(100vh-6rem))] overflow-y-auto rounded-md border border-border bg-card shadow-xl"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -346,7 +333,8 @@ export function ModalEmploye({ employe, mode, onFermer, onSauvegarder }: ModalEm
             )}
           </form>
         </motion.div>
-      </motion.div>
-    </AnimatePresence>
+        </AppModalShell>
+      </AnimatePresence>
+    </AppModalPortal>
   )
 }

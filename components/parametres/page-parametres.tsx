@@ -115,7 +115,7 @@ export function PageParametres() {
 function SectionProfil() {
   return (
     <div className="space-y-6">
-      <div className="p-6 bg-card border border-border rounded-sm">
+      <div className="luxury-panel rounded-xl p-6">
         <h3 className="font-semibold mb-6">Informations personnelles</h3>
         
         {/* Avatar */}
@@ -186,7 +186,7 @@ function SectionNotifications() {
   })
 
   return (
-    <div className="p-6 bg-card border border-border rounded-sm">
+    <div className="luxury-panel rounded-xl p-6">
       <h3 className="font-semibold mb-6">Preferences de notifications</h3>
       
       <div className="space-y-4">
@@ -221,7 +221,7 @@ function SectionNotifications() {
 function SectionSecurite() {
   return (
     <div className="space-y-6">
-      <div className="p-6 bg-card border border-border rounded-sm">
+      <div className="luxury-panel rounded-xl p-6">
         <h3 className="font-semibold mb-6">Changer le mot de passe</h3>
         
         <div className="space-y-4 max-w-md">
@@ -249,7 +249,7 @@ function SectionSecurite() {
         </div>
       </div>
 
-      <div className="p-6 bg-card border border-border rounded-sm">
+      <div className="luxury-panel rounded-xl p-6">
         <h3 className="font-semibold mb-4">Authentification a deux facteurs</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Ajoutez une couche de securite supplementaire a votre compte.
@@ -266,7 +266,7 @@ function SectionApparence() {
   const [langue, setLangue] = useState('fr')
 
   return (
-    <div className="p-6 bg-card border border-border rounded-sm">
+    <div className="luxury-panel rounded-xl p-6">
       <h3 className="font-semibold mb-6">Preferences d&apos;affichage</h3>
       
       <div className="space-y-6">
@@ -330,7 +330,7 @@ function SectionRecherche() {
   return (
     <div className="space-y-6">
       {/* Moteurs de recherche */}
-      <div className="p-6 bg-card border border-border rounded-sm">
+      <div className="luxury-panel rounded-xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="font-semibold flex items-center gap-2">
@@ -406,7 +406,7 @@ function SectionRecherche() {
       </div>
 
       {/* Configuration de la recherche */}
-      <div className="p-6 bg-card border border-border rounded-sm">
+      <div className="luxury-panel rounded-xl p-6">
         <h3 className="font-semibold mb-6 flex items-center gap-2">
           <Search className="w-5 h-5" />
           Configuration de la recherche
@@ -487,7 +487,7 @@ function SectionRecherche() {
       </div>
 
       {/* Actions de maintenance */}
-      <div className="p-6 bg-card border border-border rounded-sm">
+      <div className="luxury-panel rounded-xl p-6">
         <h3 className="font-semibold mb-4">Maintenance</h3>
         <div className="flex flex-wrap gap-3">
           <Button variant="outline" className="gap-2 rounded-sm">

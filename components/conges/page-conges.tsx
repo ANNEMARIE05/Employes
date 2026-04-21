@@ -209,7 +209,7 @@ export function PageConges() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="p-4 sm:p-5 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4">
+        <div className="stat-card flex items-center gap-3 sm:gap-4 rounded-xl p-4 sm:p-5">
           <div className="p-2.5 sm:p-3 bg-muted rounded-sm">
             <Calendar className="w-5 h-5 text-muted-foreground" />
           </div>
@@ -219,7 +219,7 @@ export function PageConges() {
           </div>
         </div>
         
-        <div className="p-4 sm:p-5 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4">
+        <div className="stat-card flex items-center gap-3 sm:gap-4 rounded-xl p-4 sm:p-5">
           <div className="p-2.5 sm:p-3 bg-warning/10 rounded-sm">
             <Clock className="w-5 h-5 text-warning" />
           </div>
@@ -229,7 +229,7 @@ export function PageConges() {
           </div>
         </div>
         
-        <div className="p-4 sm:p-5 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4">
+        <div className="stat-card flex items-center gap-3 sm:gap-4 rounded-xl p-4 sm:p-5">
           <div className="p-2.5 sm:p-3 bg-success/10 rounded-sm">
             <CheckCircle className="w-5 h-5 text-success" />
           </div>
@@ -360,7 +360,7 @@ export function PageConges() {
           {demandesPaginees.map((demande, index) => (
             <motion.div
               key={demande.id}
-              className="p-4 sm:p-5 bg-card border border-border rounded-sm hover:border-primary/30 transition-colors"
+              className="luxury-panel rounded-xl p-4 sm:p-5 transition-colors hover:border-primary/40"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}

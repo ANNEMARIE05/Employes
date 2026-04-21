@@ -6,6 +6,7 @@ import { Eye, EyeOff, ArrowRight, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Loader } from '@/components/ui/loader'
 import { Input } from '@/components/ui/input'
+import { AppBackgroundDecor } from '@/components/layout/app-background-decor'
 
 interface PageConnexionProps {
   onConnexion: (email: string, motDePasse: string) => Promise<void>
@@ -38,10 +39,11 @@ export function PageConnexion({ onConnexion }: PageConnexionProps) {
   }
 
   return (
-    <div className="min-h-screen flex">
+    <div className="relative flex min-h-dvh w-full flex-row items-stretch overflow-x-clip lg:h-dvh lg:max-h-dvh lg:overflow-y-hidden">
+      <AppBackgroundDecor />
       {/* Section gauche - Formulaire */}
       <motion.div 
-        className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 bg-background"
+        className="flex w-full flex-col items-center justify-start self-stretch overflow-y-auto bg-background p-8 pt-12 pb-10 lg:w-1/2 lg:p-16 lg:pt-16 lg:pb-12"
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -228,7 +230,7 @@ export function PageConnexion({ onConnexion }: PageConnexionProps) {
 
       {/* Section droite - Image */}
       <motion.div 
-        className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-foreground"
+        className="relative hidden min-h-0 flex-1 self-stretch overflow-hidden bg-foreground lg:flex lg:w-1/2 lg:flex-none"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}

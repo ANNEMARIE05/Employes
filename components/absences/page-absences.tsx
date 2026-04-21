@@ -83,7 +83,7 @@ export function PageAbsences() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div className="p-4 bg-card border border-border rounded-sm flex items-center gap-3">
+        <div className="stat-card flex items-center gap-3 rounded-xl p-4">
           <div className="p-2 bg-primary/10 rounded-sm">
             <Users className="w-4 h-4 text-primary" />
           </div>
@@ -92,7 +92,7 @@ export function PageAbsences() {
             <p className="text-xs text-muted-foreground">Absent(s) aujourd&apos;hui</p>
           </div>
         </div>
-        <div className="p-4 bg-card border border-border rounded-sm flex items-center gap-3">
+        <div className="stat-card flex items-center gap-3 rounded-xl p-4">
           <div className="p-2 bg-warning/10 rounded-sm">
             <Calendar className="w-4 h-4 text-warning" />
           </div>
@@ -101,7 +101,7 @@ export function PageAbsences() {
             <p className="text-xs text-muted-foreground">Absences prévues (30j)</p>
           </div>
         </div>
-        <div className="p-4 bg-card border border-border rounded-sm flex items-center gap-3">
+        <div className="stat-card flex items-center gap-3 rounded-xl p-4">
           <div className="p-2 bg-muted rounded-sm">
             <Clock3 className="w-4 h-4 text-muted-foreground" />
           </div>
@@ -113,7 +113,7 @@ export function PageAbsences() {
       </div>
 
       <motion.div
-        className="p-4 sm:p-5 bg-card border border-border rounded-sm"
+        className="luxury-panel rounded-xl p-4 sm:p-5"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -195,7 +195,7 @@ export function PageAbsences() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4">
         <motion.div
-          className="p-4 sm:p-5 bg-card border border-border rounded-sm"
+          className="luxury-panel rounded-xl p-4 sm:p-5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -226,7 +226,7 @@ export function PageAbsences() {
         </motion.div>
 
         <motion.div
-          className="p-4 sm:p-5 bg-card border border-border rounded-sm"
+          className="luxury-panel rounded-xl p-4 sm:p-5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}

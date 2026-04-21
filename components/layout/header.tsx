@@ -96,8 +96,8 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
   return (
     <motion.header
       className={cn(
-        'fixed top-0 right-0 h-16 bg-white',
-        'border-b border-border z-30 flex items-center justify-between px-3 sm:px-6',
+        'fixed top-0 right-0 h-16 bg-background/80 backdrop-blur-xl',
+        'border-b border-border/70 z-30 flex items-center justify-between px-3 sm:px-6',
         'transition-all duration-300'
       )}
       style={{
@@ -112,7 +112,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
         {isMobile && (
           <button
             onClick={basculerMenu}
-            className="p-2 rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
             aria-label={menuOuvert ? 'Fermer le menu' : 'Ouvrir le menu'}
           >
             <Menu className="w-4 h-4" />
@@ -121,7 +121,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
         <div className="flex flex-col min-w-0">
         <motion.h1
           key={ongletActif}
-          className="text-base sm:text-lg font-semibold text-foreground truncate"
+          className="text-base sm:text-lg font-semibold text-foreground truncate tracking-tight"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
@@ -144,7 +144,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
       <div className="flex items-center gap-2 sm:gap-3">
         {/* Date */}
         <motion.span
-          className="text-sm text-muted-foreground hidden lg:block capitalize"
+          className="data-chip text-muted-foreground hidden lg:block capitalize"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -183,7 +183,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <motion.button
-              className="relative p-2.5 text-muted-foreground hover:text-foreground transition-colors rounded-sm hover:bg-muted"
+              className="relative rounded-lg p-2.5 text-muted-foreground hover:text-foreground transition-colors hover:bg-muted"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -255,7 +255,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
         {/* Avatar utilisateur */}
         {utilisateurConnecte && (
           <motion.div
-            className="hidden md:flex items-center gap-3 pl-3 border-l border-border"
+            className="hidden md:flex items-center gap-3 pl-3 border-l border-border/70"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
@@ -272,7 +272,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <motion.button
-                  className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.97 }}
                   aria-label="Ouvrir le menu profil"
@@ -280,7 +280,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
                   <img
                     src={utilisateurConnecte.avatar}
                     alt={utilisateurConnecte.prenom}
-                    className="w-9 h-9 rounded-sm object-cover border border-border"
+                    className="h-9 w-9 rounded-lg border border-border/70 object-cover shadow-sm"
                   />
                 </motion.button>
               </DropdownMenuTrigger>

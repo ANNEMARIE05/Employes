@@ -90,8 +90,8 @@ export function PageNotifications() {
         animate={{ opacity: 1, y: 0 }}
       >
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-primary/10 rounded-sm">
-            <Bell className="w-6 h-6 text-primary" />
+          <div className="rounded-xl bg-primary/15 p-3">
+            <Bell className="h-6 w-6 text-primary" />
           </div>
           <div>
             <h2 className="text-lg font-semibold">Notifications</h2>
@@ -123,15 +123,15 @@ export function PageNotifications() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <p className="text-sm text-muted-foreground">Total</p>
           <p className="text-2xl font-semibold">{stats.total}</p>
         </div>
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <p className="text-sm text-muted-foreground">Non lues</p>
           <p className="text-2xl font-semibold text-primary">{stats.nonLues}</p>
         </div>
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card rounded-xl p-4">
           <p className="text-sm text-muted-foreground">Alertes</p>
           <p className="text-2xl font-semibold text-warning">{stats.alertes}</p>
         </div>
@@ -198,8 +198,8 @@ export function PageNotifications() {
               <motion.div
                 key={notif.id}
                 className={cn(
-                  'p-5 bg-card border rounded-sm transition-colors group',
-                  notif.lu ? 'border-border' : 'border-primary/30 bg-primary/5'
+                  'luxury-panel relative rounded-xl p-5 transition-colors group',
+                  notif.lu ? '' : 'border-primary/35 bg-primary/[0.06]'
                 )}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}

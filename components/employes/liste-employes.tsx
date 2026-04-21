@@ -161,19 +161,19 @@ export function ListeEmployes() {
     <div className="space-y-6">
       {/* En-tete avec statistiques */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+        className="grid grid-cols-1 gap-4 sm:grid-cols-3"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card animate-float-soft rounded-xl p-4">
           <p className="text-sm text-muted-foreground">Total</p>
           <p className="text-2xl font-semibold">{statsEmployes.total}</p>
         </div>
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card animate-float-soft rounded-xl p-4 [animation-delay:120ms]">
           <p className="text-sm text-muted-foreground">Actifs</p>
           <p className="text-2xl font-semibold text-success">{statsEmployes.actifs}</p>
         </div>
-        <div className="p-4 bg-card border border-border rounded-sm">
+        <div className="stat-card animate-float-soft rounded-xl p-4 [animation-delay:240ms]">
           <p className="text-sm text-muted-foreground">En conge</p>
           <p className="text-2xl font-semibold text-primary">{statsEmployes.enConge}</p>
         </div>
@@ -285,7 +285,7 @@ export function ListeEmployes() {
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="p-4 bg-card border border-border rounded-sm space-y-4">
+            <div className="luxury-panel space-y-4 rounded-xl p-4">
               <h4 className="font-medium text-sm">Filtres avances</h4>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-2">
@@ -343,13 +343,13 @@ export function ListeEmployes() {
         ) : (
           <motion.div
             key="liste"
-            className="bg-card border border-border rounded-sm overflow-hidden"
+            className="glass-surface overflow-hidden rounded-2xl"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             {/* En-tete tableau */}
-            <div className="grid grid-cols-12 gap-4 p-4 border-b border-border bg-muted/30 text-sm font-medium text-muted-foreground">
+            <div className="grid grid-cols-12 gap-4 border-b border-border/70 bg-gradient-to-r from-muted/50 via-muted/20 to-transparent px-5 py-4 text-xs font-semibold tracking-[0.08em] text-muted-foreground uppercase">
               <div className="col-span-4">Employe</div>
               <div className="col-span-2">Departement</div>
               <div className="col-span-2">Poste</div>

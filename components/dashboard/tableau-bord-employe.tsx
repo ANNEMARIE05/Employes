@@ -18,6 +18,7 @@ import { format, parseISO, differenceInDays } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -56,45 +57,100 @@ export function TableauBordEmploye() {
       initial="hidden"
       animate="visible"
     >
-      {/* Bannière de bienvenue employe */}
-      <motion.div
-        className="bg-card text-card-foreground border border-border rounded-sm p-4 sm:p-6"
-        variants={itemVariants}
-      >
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <img
-              src={utilisateurConnecte?.avatar}
-              alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
-              className="w-14 h-14 rounded-sm object-cover border border-border"
-            />
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs px-2 py-0.5 bg-primary/15 text-primary font-medium rounded-sm">
-                  Espace Employe
-                </span>
+      {/* Carte hero employe */}
+      <motion.div variants={itemVariants}>
+        <Card className="luxury-panel py-0">
+          <CardContent className="p-3 sm:p-4">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-stretch lg:gap-4">
+              <div className="flex min-w-0 flex-1 gap-2.5 sm:gap-3">
+                <img
+                  src={utilisateurConnecte?.avatar}
+                  alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
+                  className="h-11 w-11 shrink-0 rounded-md border border-border/70 object-cover shadow-sm sm:h-12 sm:w-12"
+                />
+                <div className="min-w-0 space-y-1">
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                    <span className="truncate text-sm font-semibold sm:text-base">
+                      {utilisateurConnecte?.prenom} {utilisateurConnecte?.nom}
+                    </span>
+                    <span className="data-chip shrink-0 text-primary">Espace Employe</span>
+                  </div>
+                  <h2 className="text-base font-semibold leading-tight sm:text-lg">
+                    Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
+                  </h2>
+                  <p className="text-xs text-muted-foreground sm:text-sm">
+                    {utilisateurConnecte?.poste} - {utilisateurConnecte?.departement}
+                  </p>
+                  {(congesEnAttente > 0 || documentsEnAttente > 0) && (
+                    <div className="flex items-center gap-1.5 rounded-md border border-border/60 bg-muted/50 px-2 py-1.5 text-xs text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5 shrink-0 text-primary" />
+                      <span>
+                        {congesEnAttente > 0 && `${congesEnAttente} conge${congesEnAttente > 1 ? 's' : ''} en attente`}
+                        {congesEnAttente > 0 && documentsEnAttente > 0 && ' - '}
+                        {documentsEnAttente > 0 && `${documentsEnAttente} document${documentsEnAttente > 1 ? 's' : ''} en attente`}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-              <h2 className="text-lg sm:text-xl font-semibold">
-                Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                {utilisateurConnecte?.poste} - {utilisateurConnecte?.departement}
-              </p>
+
+              <div className="lg:min-w-[240px] lg:border-l lg:border-border/60 lg:pl-3">
+                <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Actions rapides
+                </p>
+                <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-3 lg:grid-cols-1">
+                  <motion.button
+                    type="button"
+                    onClick={() => definirOngletActif('mes-conges')}
+                    className="group flex w-full items-start gap-2 rounded-md border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:bg-muted/60"
+                    whileHover={{ y: -1 }}
+                  >
+                    <div className="rounded-md bg-primary/10 p-1.5">
+                      <CalendarDays className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium leading-snug">Demander un conge</p>
+                      <p className="text-[11px] leading-snug text-muted-foreground">Nouvelle demande</p>
+                    </div>
+                    <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
+                  </motion.button>
+
+                  <motion.button
+                    type="button"
+                    onClick={() => definirOngletActif('mes-documents')}
+                    className="group flex w-full items-start gap-2 rounded-md border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:bg-muted/60"
+                    whileHover={{ y: -1 }}
+                  >
+                    <div className="rounded-md bg-primary/10 p-1.5">
+                      <FileText className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium leading-snug">Demander un document</p>
+                      <p className="text-[11px] leading-snug text-muted-foreground">Attestation, paie...</p>
+                    </div>
+                    <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
+                  </motion.button>
+
+                  <motion.button
+                    type="button"
+                    onClick={() => definirOngletActif('mon-profil')}
+                    className="group flex w-full items-start gap-2 rounded-md border border-border/70 bg-background/60 px-2.5 py-2 text-left transition-colors hover:bg-muted/60"
+                    whileHover={{ y: -1 }}
+                  >
+                    <div className="rounded-md bg-primary/10 p-1.5">
+                      <CheckCircle className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium leading-snug">Mon profil</p>
+                      <p className="text-[11px] leading-snug text-muted-foreground">Mes informations</p>
+                    </div>
+                    <ChevronRight className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground group-hover:text-primary" />
+                  </motion.button>
+                </div>
+              </div>
             </div>
-          </div>
-          
-          {/* Indicateur de demandes en cours */}
-          {(congesEnAttente > 0 || documentsEnAttente > 0) && (
-            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-sm border border-border">
-              <Clock className="w-4 h-4 text-primary" />
-              <span className="text-sm">
-                {congesEnAttente > 0 && `${congesEnAttente} conge${congesEnAttente > 1 ? 's' : ''} en attente`}
-                {congesEnAttente > 0 && documentsEnAttente > 0 && ' - '}
-                {documentsEnAttente > 0 && `${documentsEnAttente} document${documentsEnAttente > 1 ? 's' : ''} en attente`}
-              </span>
-            </div>
-          )}
-        </div>
+          </CardContent>
+        </Card>
       </motion.div>
 
       {/* Jours disponibles */}
@@ -132,58 +188,6 @@ export function TableauBordEmploye() {
         />
       </motion.div>
 
-      {/* Actions rapides */}
-      <motion.div variants={itemVariants}>
-        <h3 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Actions rapides</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-          <motion.button
-            onClick={() => definirOngletActif('mes-conges')}
-            className="p-3 sm:p-4 bg-card border border-border rounded-sm hover:border-primary/50 transition-colors text-left group"
-            whileHover={{ y: -2 }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-primary/10 rounded-sm">
-                <CalendarDays className="w-5 h-5 text-primary" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
-            </div>
-            <p className="text-sm sm:text-base font-medium">Demander un congé</p>
-            <p className="text-xs sm:text-sm text-muted-foreground">Soumettre une nouvelle demande</p>
-          </motion.button>
-
-          <motion.button
-            onClick={() => definirOngletActif('mes-documents')}
-            className="p-3 sm:p-4 bg-card border border-border rounded-sm hover:border-primary/50 transition-colors text-left group"
-            whileHover={{ y: -2 }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-primary/10 rounded-sm">
-                <FileText className="w-5 h-5 text-primary" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
-            </div>
-            <p className="text-sm sm:text-base font-medium">Demander un document</p>
-            <p className="text-xs sm:text-sm text-muted-foreground">Attestation, fiche de paie...</p>
-          </motion.button>
-
-          <motion.button
-            onClick={() => definirOngletActif('mon-profil')}
-            className="p-3 sm:p-4 bg-card border border-border rounded-sm hover:border-primary/50 transition-colors text-left group"
-            whileHover={{ y: -2 }}
-          >
-            <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-primary/10 rounded-sm">
-                <CheckCircle className="w-5 h-5 text-primary" />
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto group-hover:text-primary transition-colors" />
-            </div>
-            <p className="text-sm sm:text-base font-medium">Mon profil</p>
-            <p className="text-xs sm:text-sm text-muted-foreground">Voir mes informations</p>
-          </motion.button>
-
-        </div>
-      </motion.div>
-
       {/* Mes dernières demandes de congés */}
       <motion.div variants={itemVariants}>
         <div className="flex items-center justify-between mb-4">
@@ -200,7 +204,7 @@ export function TableauBordEmploye() {
         
         <div className="space-y-2.5 sm:space-y-3">
           {mesConges.length === 0 ? (
-            <div className="p-4 sm:p-6 bg-card border border-border rounded-sm text-center">
+            <div className="luxury-panel rounded-xl p-4 text-center sm:p-6">
               <Calendar className="w-10 h-10 text-muted-foreground/30 mx-auto mb-2" />
               <p className="text-muted-foreground">Aucune demande de congé</p>
             </div>
@@ -208,7 +212,7 @@ export function TableauBordEmploye() {
             mesConges.slice(0, 3).map((conge) => (
               <motion.div
                 key={conge.id}
-                className="p-3 sm:p-4 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4"
+                className="luxury-panel flex items-center gap-3 rounded-xl p-3 sm:gap-4 sm:p-4"
                 whileHover={{ x: 4 }}
               >
                 <div className="flex-1">
@@ -246,7 +250,7 @@ export function TableauBordEmploye() {
         
         <div className="space-y-2.5 sm:space-y-3">
           {mesDocuments.length === 0 ? (
-            <div className="p-4 sm:p-6 bg-card border border-border rounded-sm text-center">
+            <div className="luxury-panel rounded-xl p-4 text-center sm:p-6">
               <FileText className="w-10 h-10 text-muted-foreground/30 mx-auto mb-2" />
               <p className="text-muted-foreground">Aucune demande de document</p>
             </div>
@@ -254,7 +258,7 @@ export function TableauBordEmploye() {
             mesDocuments.slice(0, 3).map((doc) => (
               <motion.div
                 key={doc.id}
-                className="p-3 sm:p-4 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4"
+                className="luxury-panel flex items-center gap-3 rounded-xl p-3 sm:gap-4 sm:p-4"
                 whileHover={{ x: 4 }}
               >
                 <div className="flex-1">

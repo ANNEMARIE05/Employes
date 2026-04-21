@@ -133,11 +133,12 @@ export function Sidebar() {
       )}
       <motion.aside
         className={cn(
-          'fixed left-0 bg-sidebar text-sidebar-foreground overflow-hidden',
+          'fixed left-0 overflow-hidden text-sidebar-foreground',
           'flex flex-col border-r border-sidebar-border z-40',
+          'bg-sidebar/95 backdrop-blur-xl',
           'transition-all duration-300 ease-out',
           isMobile
-            ? 'top-16 h-[calc(100dvh-4rem)] w-[88vw] max-w-[340px] shadow-xl rounded-r-md'
+            ? 'top-16 h-[calc(100dvh-4rem)] w-[88vw] max-w-[340px] shadow-xl rounded-r-xl'
             : 'top-0 h-screen'
         )}
         initial={false}
@@ -150,7 +151,7 @@ export function Sidebar() {
         style={{ willChange: 'transform,width' }}
       >
         {/* Logo et toggle */}
-        <div className="flex items-center justify-between gap-2 p-4 border-b border-sidebar-border min-w-0">
+        <div className="flex items-center justify-between gap-2 border-b border-sidebar-border/80 p-4 min-w-0">
           <AnimatePresence mode="wait">
             {menuOuvert && (
               <motion.div
@@ -160,11 +161,11 @@ export function Sidebar() {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-8 h-8 bg-sidebar-primary flex items-center justify-center">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary shadow-md">
                   <span className="text-sidebar-primary-foreground font-bold text-sm">M</span>
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-bold text-base tracking-tight leading-none truncate">MUFER</span>
+                    <span className="font-bold text-base tracking-tight leading-none truncate">MUFER</span>
                   <span className="text-[10px] text-sidebar-primary tracking-widest truncate">EMPLOYES</span>
                 </div>
               </motion.div>
@@ -172,7 +173,7 @@ export function Sidebar() {
           </AnimatePresence>
           
           {!menuOuvert && !isMobile && (
-            <div className="w-8 h-8 bg-sidebar-primary flex items-center justify-center mx-auto">
+            <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-sidebar-primary shadow-md">
               <span className="text-sidebar-primary-foreground font-bold text-sm">M</span>
             </div>
           )}
@@ -181,7 +182,7 @@ export function Sidebar() {
             <motion.button
               onClick={basculerMenu}
               className={cn(
-                'p-1.5 rounded-sm hover:bg-sidebar-accent transition-colors',
+                'rounded-lg p-1.5 hover:bg-sidebar-accent transition-colors',
                 !menuOuvert && 'absolute -right-3 top-6 bg-sidebar border border-sidebar-border'
               )}
               whileHover={{ scale: 1.05 }}
@@ -207,10 +208,10 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => handleChangerOnglet(item.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 min-w-0 overflow-hidden',
+                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 min-w-0 overflow-hidden',
                   'relative group',
                   estActif 
-                    ? 'bg-sidebar-accent text-sidebar-primary' 
+                    ? 'bg-sidebar-accent text-sidebar-primary shadow-sm' 
                     : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
                 )}
                 initial={{ opacity: 0, x: -20 }}
@@ -221,7 +222,7 @@ export function Sidebar() {
                 {/* Indicateur actif */}
                 {estActif && (
                   <motion.div
-                    className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-r-sm"
+                    className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-sm bg-sidebar-primary"
                     layoutId="indicateurActif"
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />
@@ -257,7 +258,7 @@ export function Sidebar() {
 
                 {/* Tooltip quand fermé */}
                 {!menuOuvert && !isMobile && (
-                  <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border">
+                  <div className="absolute left-full z-50 ml-2 whitespace-nowrap rounded-lg border border-border bg-popover px-2 py-1 text-sm text-popover-foreground opacity-0 transition-opacity pointer-events-none group-hover:opacity-100">
                     {item.label}
                   </div>
                 )}
@@ -267,7 +268,7 @@ export function Sidebar() {
         </nav>
 
         {/* Section bas */}
-        <div className="border-t border-sidebar-border py-4 px-2 space-y-1">
+        <div className="border-t border-sidebar-border/80 py-4 px-2 space-y-1">
           {menuSecondaireFiltre.map((item) => {
             const Icone = item.icone
             const estActif = ongletActif === item.id
@@ -277,10 +278,10 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => handleChangerOnglet(item.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 min-w-0 overflow-hidden',
+                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 min-w-0 overflow-hidden',
                   'group relative',
                   estActif 
-                    ? 'bg-sidebar-accent text-sidebar-primary' 
+                    ? 'bg-sidebar-accent text-sidebar-primary shadow-sm' 
                     : 'text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/50'
                 )}
                 whileHover={{ x: 4 }}
@@ -307,14 +308,14 @@ export function Sidebar() {
             <motion.div
               className={cn(
                 'flex items-center gap-3 p-3 mt-2 rounded-sm bg-sidebar-accent/30 min-w-0 overflow-hidden',
-                'cursor-pointer hover:bg-sidebar-accent/50 transition-colors'
+                'cursor-pointer rounded-xl hover:bg-sidebar-accent/50 transition-colors'
               )}
               whileHover={{ scale: 1.01 }}
             >
               <img
                 src={utilisateurConnecte.avatar}
                 alt={`${utilisateurConnecte.prenom} ${utilisateurConnecte.nom}`}
-                className="w-9 h-9 rounded-sm object-cover"
+                className="h-9 w-9 rounded-lg object-cover border border-sidebar-border/70"
               />
               <AnimatePresence mode="wait">
                 {(menuOuvert || isMobile) && (
@@ -328,7 +329,7 @@ export function Sidebar() {
                       <p className="text-sm font-medium truncate">
                         {utilisateurConnecte.prenom} {utilisateurConnecte.nom}
                       </p>
-                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded-sm font-medium', roleBadge.color)}>
+                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded-full font-medium', roleBadge.color)}>
                         {roleBadge.label}
                       </span>
                     </div>
@@ -346,6 +347,7 @@ export function Sidebar() {
             onClick={() => setConfirmationDeconnexionOuverte(true)}
             className={cn(
               'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-colors',
+              'rounded-lg',
               'text-sidebar-foreground/70 hover:text-destructive hover:bg-destructive/10'
             )}
             whileHover={{ x: 4 }}

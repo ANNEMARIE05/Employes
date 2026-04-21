@@ -21,6 +21,7 @@ import { PageParametres } from '@/components/parametres/page-parametres'
 import { PageParametrage } from '@/components/parametrage/page-parametrage'
 import { PageAbsences } from '@/components/absences/page-absences'
 import { LoaderPleinEcran } from '@/components/ui/loader'
+import { AppBackgroundDecor } from '@/components/layout/app-background-decor'
 import { FormulaireConge } from '@/components/conges/formulaire-conge'
 import { FormulaireDocument } from '@/components/documents/formulaire-document'
 import { employesMock, notificationsMock } from '@/lib/donnees-mock'
@@ -240,7 +241,8 @@ function ApplicationContent() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative overflow-x-clip">
+      <AppBackgroundDecor />
       {/* Sidebar */}
       <Sidebar />
       
@@ -250,7 +252,7 @@ function ApplicationContent() {
       {/* Contenu principal */}
       <motion.main
         className={cn(
-          'pt-18 sm:pt-20 pb-6 sm:pb-8 px-2.5 sm:px-6 min-h-screen transition-all duration-300',
+          'relative z-10 min-h-screen px-2.5 pt-18 transition-all duration-300 sm:px-6 sm:pt-20',
           isMobile ? 'ml-0' : (menuOuvert ? 'ml-[260px]' : 'ml-[72px]')
         )}
         initial={{ opacity: 0 }}

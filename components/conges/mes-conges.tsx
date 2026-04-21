@@ -78,7 +78,7 @@ export function MesConges() {
       {/* Jours restants */}
       <div className="grid grid-cols-2 gap-4">
         <motion.div 
-          className="p-5 bg-card border border-border"
+          className="stat-card rounded-xl p-5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -86,7 +86,7 @@ export function MesConges() {
           <p className="text-3xl font-bold">{utilisateurConnecte?.soldeConges || 0} <span className="text-lg font-normal text-muted-foreground">jours</span></p>
         </motion.div>
         <motion.div 
-          className="p-5 bg-card border border-border"
+          className="stat-card rounded-xl p-5"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
@@ -142,7 +142,7 @@ export function MesConges() {
           {demandesFiltrees.map((demande, index) => (
             <motion.div
               key={demande.id}
-              className="p-5 bg-card border border-border rounded-sm hover:border-primary/30 transition-colors"
+              className="luxury-panel rounded-xl p-5 transition-colors hover:border-primary/40"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}

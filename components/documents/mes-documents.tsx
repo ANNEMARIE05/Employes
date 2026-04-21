@@ -89,7 +89,7 @@ export function MesDocuments() {
 
       {/* Types de documents disponibles */}
       <motion.div
-        className="p-5 bg-card border border-border rounded-sm"
+        className="stat-card rounded-xl p-5"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -164,7 +164,7 @@ export function MesDocuments() {
           {demandesFiltrees.map((demande, index) => (
             <motion.div
               key={demande.id}
-              className="p-5 bg-card border border-border rounded-sm hover:border-primary/30 transition-colors"
+              className="luxury-panel rounded-xl p-5 transition-colors hover:border-primary/40"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}

@@ -59,10 +59,10 @@ export function PageStatistiques() {
   const stats = statistiquesMock
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 sm:space-y-8">
       {/* KPIs principaux */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -98,10 +98,10 @@ export function PageStatistiques() {
       </motion.div>
 
       {/* Graphiques ligne 1 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {/* Évolution absentéisme */}
         <motion.div
-          className="p-6 bg-card border border-border rounded-sm"
+          className="luxury-panel rounded-xl p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -149,7 +149,7 @@ export function PageStatistiques() {
 
         {/* Congés par type */}
         <motion.div
-          className="p-6 bg-card border border-border rounded-sm"
+          className="luxury-panel rounded-xl p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -205,7 +205,7 @@ export function PageStatistiques() {
 
       {/* Graphique congés par mois */}
       <motion.div
-        className="p-6 bg-card border border-border rounded-sm"
+        className="luxury-panel rounded-xl p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
@@ -252,7 +252,7 @@ export function PageStatistiques() {
 
       {/* Répartition par département */}
       <motion.div
-        className="p-6 bg-card border border-border rounded-sm"
+        className="luxury-panel rounded-xl p-6"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
@@ -309,13 +309,13 @@ interface KPICardProps {
 function KPICard({ titre, valeur, suffixe = '', description, tendance, icone, delai = 0 }: KPICardProps) {
   return (
     <motion.div
-      className="p-5 bg-card border border-border rounded-sm"
+      className="stat-card rounded-xl p-5"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: delai }}
     >
       <div className="flex items-start justify-between mb-3">
-        <div className="p-2 bg-primary/10 rounded-sm text-primary">
+        <div className="rounded-lg bg-primary/15 p-2 text-primary">
           {icone}
         </div>
         {tendance && (

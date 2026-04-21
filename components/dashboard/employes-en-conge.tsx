@@ -52,7 +52,7 @@ export function EmployesEnConge() {
 
   return (
     <motion.div
-      className="p-6 bg-card border border-border rounded-sm h-full min-h-[420px] flex flex-col"
+      className="luxury-panel flex h-full min-h-[420px] flex-col rounded-xl p-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.5 }}

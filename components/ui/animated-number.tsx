@@ -96,14 +96,16 @@ export function CounterCard({
 }: CounterCardProps) {
   return (
     <motion.div
-      className="p-4 sm:p-5 bg-card border border-border rounded-sm min-h-[128px] sm:min-h-[140px] flex flex-col justify-between transition-colors duration-300 overflow-hidden"
+      className={cn(
+        'stat-card flex min-h-[128px] flex-col justify-between overflow-hidden p-4 sm:min-h-[140px] sm:p-5',
+      )}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: delai, duration: 0.5 }}
       whileHover={{ y: -2 }}
     >
       <div className="flex items-start justify-between gap-2 mb-3 sm:mb-4">
-        <div className="p-1.5 sm:p-2 bg-primary/10 text-primary rounded-sm shrink-0">
+        <div className="shrink-0 rounded-md bg-primary/15 p-1.5 text-primary sm:p-2">
           {icone}
         </div>
         {tendance && (

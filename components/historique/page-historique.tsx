@@ -89,8 +89,8 @@ export function PageHistorique() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="flex items-center gap-3">
-        <div className="p-3 bg-primary/10 rounded-sm">
-          <History className="w-5 h-5 text-primary" />
+        <div className="rounded-xl bg-primary/15 p-3">
+          <History className="h-5 w-5 text-primary" />
         </div>
         <div>
           <h2 className="text-base sm:text-lg font-semibold">Historique</h2>
@@ -136,7 +136,7 @@ export function PageHistorique() {
           return (
             <motion.div
               key={item.id}
-              className="p-4 bg-card border border-border rounded-sm"
+              className="luxury-panel rounded-xl p-4"
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.03 }}
