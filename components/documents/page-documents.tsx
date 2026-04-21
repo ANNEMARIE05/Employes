@@ -14,8 +14,12 @@ import {
   FileCheck,
   Filter,
   X,
+  MessageSquare,
+  AlertTriangle,
+  Upload,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAppStore } from '@/store/useAppStore'
 import { 
   demandesDocumentsMock, 
   enrichirDemandesDocuments,
@@ -26,11 +30,21 @@ import {
   COULEURS_STATUT,
   type StatutDemande,
   type TypeDocument,
+  type DemandeDocument,
 } from '@/types'
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { Button } from '@/components/ui/button'
 import { FormulaireDocument } from './formulaire-document'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Pagination,
   PaginationContent,
@@ -53,11 +67,20 @@ const ICONES_DOCUMENT: Record<TypeDocument, React.ReactNode> = {
 const ELEMENTS_PAR_PAGE = 5
 
 export function PageDocuments() {
+  const { modifierStatutDocument, ajouterNotification } = useAppStore()
   const [recherche, setRecherche] = useState('')
   const [filtreStatut, setFiltreStatut] = useState<string>('')
   const [filtreType, setFiltreType] = useState<string>('')
   const [formulaireOuvert, setFormulaireOuvert] = useState(false)
   const [pageActuelle, setPageActuelle] = useState(1)
+  
+  // Modal de validation/refus
+  const [modalAction, setModalAction] = useState<{
+    type: 'approuver' | 'refuser'
+    demande: DemandeDocument
+  } | null>(null)
+  const [commentaireRH, setCommentaireRH] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const demandesEnrichies = enrichirDemandesDocuments(demandesDocumentsMock)
 
@@ -101,6 +124,39 @@ export function PageDocuments() {
   }
 
   const filtresActifs = recherche || filtreStatut || filtreType
+
+  // Handlers pour approuver/refuser
+  const handleOpenModal = (type: 'approuver' | 'refuser', demande: DemandeDocument) => {
+    setModalAction({ type, demande })
+    setCommentaireRH('')
+  }
+
+  const handleCloseModal = () => {
+    setModalAction(null)
+    setCommentaireRH('')
+  }
+
+  const handleConfirmAction = async () => {
+    if (!modalAction) return
+    
+    setIsSubmitting(true)
+    
+    // Simulation d'une API
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    const statut: StatutDemande = modalAction.type === 'approuver' ? 'approuve' : 'refuse'
+    modifierStatutDocument(modalAction.demande.id, statut)
+    
+    // Ajouter une notification
+    ajouterNotification({
+      titre: modalAction.type === 'approuver' ? 'Document pret' : 'Demande refusee',
+      message: `La demande de ${LABELS_TYPE_DOCUMENT[modalAction.demande.typeDocument]} de ${modalAction.demande.employe?.prenom} ${modalAction.demande.employe?.nom} a ete ${modalAction.type === 'approuver' ? 'traitee' : 'refusee'}.`,
+      type: modalAction.type === 'approuver' ? 'succes' : 'avertissement',
+    })
+    
+    setIsSubmitting(false)
+    handleCloseModal()
+  }
 
   // Generate page numbers
   const generatePageNumbers = () => {
@@ -277,6 +333,23 @@ export function PageDocuments() {
               transition={{ delay: index * 0.05 }}
               layout
             >
+              {/* Avatar employe */}
+              <div className="flex items-center gap-3 min-w-[180px]">
+                <img
+                  src={demande.employe?.avatar}
+                  alt={`${demande.employe?.prenom} ${demande.employe?.nom}`}
+                  className="w-10 h-10 rounded-sm object-cover shrink-0"
+                />
+                <div className="min-w-0">
+                  <p className="font-medium text-sm truncate">
+                    {demande.employe?.prenom} {demande.employe?.nom}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {demande.employe?.poste}
+                  </p>
+                </div>
+              </div>
+
               {/* Icone document */}
               <div className="p-3 bg-muted rounded-sm shrink-0">
                 {ICONES_DOCUMENT[demande.typeDocument]}
@@ -294,7 +367,7 @@ export function PageDocuments() {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Demande par {demande.employe?.prenom} {demande.employe?.nom} - {format(parseISO(demande.dateCreation), 'd MMMM yyyy', { locale: fr })}
+                  Demande le {format(parseISO(demande.dateCreation), 'd MMMM yyyy', { locale: fr })}
                 </p>
                 {demande.commentaire && (
                   <p className="text-sm text-muted-foreground mt-1">
@@ -318,16 +391,20 @@ export function PageDocuments() {
                 {demande.statut === 'en_attente' && (
                   <div className="flex gap-2">
                     <motion.button
+                      onClick={() => handleOpenModal('approuver', demande)}
                       className="p-2 bg-success/10 text-success rounded-sm hover:bg-success/20 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      title="Approuver et fournir le document"
                     >
                       <CheckCircle className="w-4 h-4" />
                     </motion.button>
                     <motion.button
+                      onClick={() => handleOpenModal('refuser', demande)}
                       className="p-2 bg-destructive/10 text-destructive rounded-sm hover:bg-destructive/20 transition-colors"
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
+                      title="Refuser la demande"
                     >
                       <XCircle className="w-4 h-4" />
                     </motion.button>
@@ -411,6 +488,96 @@ export function PageDocuments() {
           <FormulaireDocument onFermer={() => setFormulaireOuvert(false)} />
         )}
       </AnimatePresence>
+
+      {/* Modal d'approbation/refus avec commentaire */}
+      <Dialog open={modalAction !== null} onOpenChange={() => handleCloseModal()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {modalAction?.type === 'approuver' ? (
+                <>
+                  <Upload className="w-5 h-5 text-success" />
+                  Traiter la demande
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-5 h-5 text-destructive" />
+                  Refuser la demande
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              {modalAction?.demande && (
+                <span>
+                  Demande de <strong>{LABELS_TYPE_DOCUMENT[modalAction.demande.typeDocument]}</strong>
+                  {' '}par <strong>{modalAction.demande.employe?.prenom} {modalAction.demande.employe?.nom}</strong>
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            {modalAction?.type === 'approuver' && (
+              <div className="p-4 bg-success/10 border border-success/20 rounded-sm">
+                <p className="text-sm text-success flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Le document sera marque comme disponible au telechargement
+                </p>
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              <label htmlFor="commentaire-doc" className="text-sm font-medium flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" />
+                Commentaire RH {modalAction?.type === 'refuser' && <span className="text-destructive">*</span>}
+              </label>
+              <Textarea
+                id="commentaire-doc"
+                placeholder={modalAction?.type === 'approuver' 
+                  ? "Ajoutez un commentaire (optionnel)..." 
+                  : "Indiquez la raison du refus..."}
+                value={commentaireRH}
+                onChange={(e) => setCommentaireRH(e.target.value)}
+                rows={4}
+              />
+              {modalAction?.type === 'refuser' && !commentaireRH && (
+                <p className="text-xs text-muted-foreground">
+                  Un commentaire est requis pour expliquer le refus
+                </p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={handleCloseModal} disabled={isSubmitting}>
+              Annuler
+            </Button>
+            <Button
+              onClick={handleConfirmAction}
+              disabled={isSubmitting || (modalAction?.type === 'refuser' && !commentaireRH.trim())}
+              className={cn(
+                modalAction?.type === 'approuver'
+                  ? 'bg-success text-success-foreground hover:bg-success/90'
+                  : 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              )}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <Clock className="w-4 h-4" />
+                  </motion.span>
+                  Traitement...
+                </span>
+              ) : (
+                modalAction?.type === 'approuver' ? 'Confirmer' : 'Refuser'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

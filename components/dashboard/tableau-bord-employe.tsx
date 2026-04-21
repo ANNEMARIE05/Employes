@@ -10,12 +10,15 @@ import {
   CalendarDays,
   FileCheck,
   ChevronRight,
+  User,
+  Bell,
+  TrendingUp,
 } from 'lucide-react'
 import { CounterCard } from '@/components/ui/animated-number'
 import { useAppStore } from '@/store/useAppStore'
 import { demandesCongesMock, demandesDocumentsMock, enrichirDemandesConges, enrichirDemandesDocuments } from '@/lib/donnees-mock'
 import { LABELS_TYPE_CONGE, LABELS_STATUT, COULEURS_STATUT, LABELS_TYPE_DOCUMENT } from '@/types'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, differenceInDays } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -57,24 +60,50 @@ export function TableauBordEmploye() {
       initial="hidden"
       animate="visible"
     >
-      {/* Bannière de bienvenue */}
+      {/* Bannière de bienvenue employe */}
       <motion.div
         className="relative overflow-hidden bg-sidebar text-sidebar-foreground p-6"
         variants={itemVariants}
       >
-        <div className="relative z-10">
-          <h2 className="text-xl font-semibold mb-1">
-            Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
-          </h2>
-          <p className="text-sidebar-foreground/70 text-sm">
-            Bienvenue sur votre espace personnel
-          </p>
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <img
+              src={utilisateurConnecte?.avatar}
+              alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
+              className="w-14 h-14 rounded-sm object-cover border-2 border-sidebar-primary"
+            />
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs px-2 py-0.5 bg-sidebar-accent text-sidebar-foreground font-medium rounded-sm">
+                  Espace Employe
+                </span>
+              </div>
+              <h2 className="text-xl font-semibold">
+                Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
+              </h2>
+              <p className="text-sidebar-foreground/70 text-sm">
+                {utilisateurConnecte?.poste} - {utilisateurConnecte?.departement}
+              </p>
+            </div>
+          </div>
+          
+          {/* Indicateur de demandes en cours */}
+          {(congesEnAttente > 0 || documentsEnAttente > 0) && (
+            <div className="flex items-center gap-2 bg-sidebar-accent/50 px-3 py-2 rounded-sm">
+              <Clock className="w-4 h-4 text-sidebar-primary" />
+              <span className="text-sm">
+                {congesEnAttente > 0 && `${congesEnAttente} conge${congesEnAttente > 1 ? 's' : ''} en attente`}
+                {congesEnAttente > 0 && documentsEnAttente > 0 && ' - '}
+                {documentsEnAttente > 0 && `${documentsEnAttente} document${documentsEnAttente > 1 ? 's' : ''} en attente`}
+              </span>
+            </div>
+          )}
         </div>
         
         {/* Décoration géométrique */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-20">
-          <div className="w-16 h-16 border-2 border-sidebar-primary" />
-          <div className="w-8 h-8 bg-sidebar-primary mt-8" />
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-10">
+          <div className="w-20 h-20 border-2 border-sidebar-primary" />
+          <div className="w-10 h-10 bg-sidebar-primary mt-10" />
         </div>
       </motion.div>
 

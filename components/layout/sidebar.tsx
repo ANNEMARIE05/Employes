@@ -88,7 +88,7 @@ export function Sidebar() {
   // Scroll to top when changing page
   const handleChangerOnglet = (onglet: string) => {
     definirOngletActif(onglet)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Le scroll est gere dans page.tsx via useEffect
   }
 
   const handleDeconnexion = () => {

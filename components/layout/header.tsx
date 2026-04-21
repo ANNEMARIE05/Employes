@@ -20,19 +20,31 @@ import { fr } from 'date-fns/locale'
 const titresPages: Record<string, { titre: string; description: string }> = {
   'tableau-bord': { 
     titre: 'Tableau de bord', 
-    description: 'Vue d\'ensemble de votre activité RH' 
+    description: 'Vue d\'ensemble de votre activité' 
   },
   'employes': { 
     titre: 'Employés', 
     description: 'Gestion de l\'effectif et des profils' 
   },
   'conges': { 
-    titre: 'Congés', 
-    description: 'Demandes et planning des absences' 
+    titre: 'Gestion des congés', 
+    description: 'Traitement des demandes de congés' 
+  },
+  'mes-conges': { 
+    titre: 'Mes congés', 
+    description: 'Gérez vos demandes de congés' 
   },
   'documents': { 
-    titre: 'Documents', 
-    description: 'Demandes de documents administratifs' 
+    titre: 'Gestion des documents', 
+    description: 'Traitement des demandes de documents' 
+  },
+  'mes-documents': { 
+    titre: 'Mes documents', 
+    description: 'Vos documents administratifs' 
+  },
+  'mon-profil': { 
+    titre: 'Mon profil', 
+    description: 'Vos informations personnelles' 
   },
   'statistiques': { 
     titre: 'Statistiques', 
@@ -220,7 +232,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
         </DropdownMenu>
 
         {/* Bouton nouvelle demande */}
-        {(ongletActif === 'conges' || ongletActif === 'documents') && (
+        {(ongletActif === 'conges' || ongletActif === 'documents' || ongletActif === 'mes-conges' || ongletActif === 'mes-documents') && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}

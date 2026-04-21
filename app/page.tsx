@@ -6,9 +6,13 @@ import { useAppStore } from '@/store/useAppStore'
 import { Sidebar } from '@/components/layout/sidebar'
 import { Header } from '@/components/layout/header'
 import { TableauBord } from '@/components/dashboard/tableau-bord'
+import { TableauBordEmploye } from '@/components/dashboard/tableau-bord-employe'
 import { ListeEmployes } from '@/components/employes/liste-employes'
 import { PageConges } from '@/components/conges/page-conges'
+import { MesConges } from '@/components/conges/mes-conges'
 import { PageDocuments } from '@/components/documents/page-documents'
+import { MesDocuments } from '@/components/documents/mes-documents'
+import { MonProfil } from '@/components/profil/mon-profil'
 import { PageStatistiques } from '@/components/statistiques/page-statistiques'
 import { PageNotifications } from '@/components/notifications/page-notifications'
 import { PageParametres } from '@/components/parametres/page-parametres'
@@ -29,6 +33,7 @@ export default function Application() {
     ongletActif, 
     menuOuvert, 
     definirUtilisateur,
+    definirOngletActif,
     utilisateurConnecte,
     estAuthentifie,
     deconnecter,
@@ -62,38 +67,62 @@ export default function Application() {
     
     definirUtilisateur(utilisateur)
     definirNotifications(notificationsMock)
+    
+    // Toujours rediriger vers le tableau de bord apres connexion
+    definirOngletActif('tableau-bord')
   }
 
   // Gestion nouvelle demande
   const handleNouvelleDemande = () => {
-    if (ongletActif === 'conges') {
+    if (ongletActif === 'conges' || ongletActif === 'mes-conges') {
       setFormulaireCongeOuvert(true)
-    } else if (ongletActif === 'documents') {
+    } else if (ongletActif === 'documents' || ongletActif === 'mes-documents') {
       setFormulaireDocumentOuvert(true)
     }
   }
 
+  // Scroll to top when changing tabs
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [ongletActif])
+
   // Rendu du contenu selon l'onglet actif
   const renderContenu = () => {
+    const role = utilisateurConnecte?.role || 'employe'
+    const isRH = role === 'rh'
+    const isManager = role === 'manager'
+    
     switch (ongletActif) {
       case 'tableau-bord':
-        return <TableauBord />
+        // Dashboard different selon le role
+        return isRH ? <TableauBord /> : <TableauBordEmploye />
       case 'employes':
-        return <ListeEmployes />
+        // Seul RH et manager peuvent voir la liste des employes
+        return (isRH || isManager) ? <ListeEmployes /> : <TableauBordEmploye />
       case 'conges':
-        return <PageConges />
+        // RH voit toutes les demandes, employe voit ses propres demandes
+        return isRH ? <PageConges /> : <MesConges />
+      case 'mes-conges':
+        return <MesConges />
       case 'documents':
-        return <PageDocuments />
+        // RH voit toutes les demandes
+        return isRH ? <PageDocuments /> : <MesDocuments />
+      case 'mes-documents':
+        return <MesDocuments />
+      case 'mon-profil':
+        return <MonProfil />
       case 'statistiques':
-        return <PageStatistiques />
+        // Seul RH et manager peuvent voir les statistiques
+        return (isRH || isManager) ? <PageStatistiques /> : <TableauBordEmploye />
       case 'notifications':
         return <PageNotifications />
       case 'parametrage':
-        return <PageParametrage />
+        // Seul RH peut voir le parametrage
+        return isRH ? <PageParametrage /> : <TableauBordEmploye />
       case 'parametres':
         return <PageParametres />
       default:
-        return <TableauBord />
+        return isRH ? <TableauBord /> : <TableauBordEmploye />
     }
   }
 

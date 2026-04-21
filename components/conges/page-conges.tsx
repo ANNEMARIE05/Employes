@@ -11,8 +11,11 @@ import {
   Search,
   SlidersHorizontal,
   X,
+  MessageSquare,
+  AlertTriangle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useAppStore } from '@/store/useAppStore'
 import { 
   demandesCongesMock, 
   enrichirDemandesConges,
@@ -23,11 +26,21 @@ import {
   COULEURS_STATUT,
   type StatutDemande,
   type TypeConge,
+  type DemandeConge,
 } from '@/types'
 import { format, parseISO } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import { FormulaireConge } from './formulaire-conge'
 import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
 import {
   Pagination,
   PaginationContent,
@@ -43,12 +56,21 @@ type FiltreStatut = 'tous' | StatutDemande
 const ELEMENTS_PAR_PAGE = 5
 
 export function PageConges() {
+  const { modifierStatutConge, ajouterNotification } = useAppStore()
   const [filtreStatut, setFiltreStatut] = useState<FiltreStatut>('tous')
   const [filtreType, setFiltreType] = useState<string>('')
   const [recherche, setRecherche] = useState('')
   const [formulaireOuvert, setFormulaireOuvert] = useState(false)
   const [pageActuelle, setPageActuelle] = useState(1)
   const [filtresAvancesOuverts, setFiltresAvancesOuverts] = useState(false)
+  
+  // Modal de validation/refus
+  const [modalAction, setModalAction] = useState<{
+    type: 'approuver' | 'refuser'
+    demande: DemandeConge
+  } | null>(null)
+  const [commentaireRH, setCommentaireRH] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const demandesEnrichies = enrichirDemandesConges(demandesCongesMock)
 
@@ -98,6 +120,39 @@ export function PageConges() {
   }
 
   const filtresActifs = recherche || filtreStatut !== 'tous' || filtreType
+
+  // Handlers pour approuver/refuser
+  const handleOpenModal = (type: 'approuver' | 'refuser', demande: DemandeConge) => {
+    setModalAction({ type, demande })
+    setCommentaireRH('')
+  }
+
+  const handleCloseModal = () => {
+    setModalAction(null)
+    setCommentaireRH('')
+  }
+
+  const handleConfirmAction = async () => {
+    if (!modalAction) return
+    
+    setIsSubmitting(true)
+    
+    // Simulation d'une API
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    const statut: StatutDemande = modalAction.type === 'approuver' ? 'approuve' : 'refuse'
+    modifierStatutConge(modalAction.demande.id, statut, commentaireRH || undefined)
+    
+    // Ajouter une notification
+    ajouterNotification({
+      titre: modalAction.type === 'approuver' ? 'Conge approuve' : 'Conge refuse',
+      message: `La demande de conge de ${modalAction.demande.employe?.prenom} ${modalAction.demande.employe?.nom} a ete ${modalAction.type === 'approuver' ? 'approuvee' : 'refusee'}.`,
+      type: modalAction.type === 'approuver' ? 'succes' : 'avertissement',
+    })
+    
+    setIsSubmitting(false)
+    handleCloseModal()
+  }
 
   // Generate page numbers
   const generatePageNumbers = () => {
@@ -270,20 +325,24 @@ export function PageConges() {
                     {LABELS_STATUT[demande.statut]}
                   </span>
 
-                  {/* Actions si en attente */}
+                  {/* Actions si en attente - RH uniquement */}
                   {demande.statut === 'en_attente' && (
                     <div className="flex gap-2">
                       <motion.button
+                        onClick={() => handleOpenModal('approuver', demande)}
                         className="p-2 bg-success/10 text-success rounded-sm hover:bg-success/20 transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+                        title="Approuver la demande"
                       >
                         <CheckCircle className="w-4 h-4" />
                       </motion.button>
                       <motion.button
+                        onClick={() => handleOpenModal('refuser', demande)}
                         className="p-2 bg-destructive/10 text-destructive rounded-sm hover:bg-destructive/20 transition-colors"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+                        title="Refuser la demande"
                       >
                         <XCircle className="w-4 h-4" />
                       </motion.button>
@@ -385,6 +444,89 @@ export function PageConges() {
           <FormulaireConge onFermer={() => setFormulaireOuvert(false)} />
         )}
       </AnimatePresence>
+
+      {/* Modal d'approbation/refus avec commentaire */}
+      <Dialog open={modalAction !== null} onOpenChange={() => handleCloseModal()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {modalAction?.type === 'approuver' ? (
+                <>
+                  <CheckCircle className="w-5 h-5 text-success" />
+                  Approuver la demande
+                </>
+              ) : (
+                <>
+                  <AlertTriangle className="w-5 h-5 text-destructive" />
+                  Refuser la demande
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              {modalAction?.demande && (
+                <span>
+                  Demande de <strong>{modalAction.demande.employe?.prenom} {modalAction.demande.employe?.nom}</strong>
+                  {' '}pour {LABELS_TYPE_CONGE[modalAction.demande.type].toLowerCase()}
+                  {' '}du {format(parseISO(modalAction.demande.dateDebut), 'd MMM', { locale: fr })} au {format(parseISO(modalAction.demande.dateFin), 'd MMM yyyy', { locale: fr })}
+                  {' '}({modalAction.demande.nombreJours} jour{modalAction.demande.nombreJours > 1 ? 's' : ''})
+                </span>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label htmlFor="commentaire" className="text-sm font-medium flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" />
+                Commentaire RH {modalAction?.type === 'refuser' && <span className="text-destructive">*</span>}
+              </label>
+              <Textarea
+                id="commentaire"
+                placeholder={modalAction?.type === 'approuver' 
+                  ? "Ajoutez un commentaire (optionnel)..." 
+                  : "Indiquez la raison du refus..."}
+                value={commentaireRH}
+                onChange={(e) => setCommentaireRH(e.target.value)}
+                rows={4}
+              />
+              {modalAction?.type === 'refuser' && !commentaireRH && (
+                <p className="text-xs text-muted-foreground">
+                  Un commentaire est requis pour expliquer le refus
+                </p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button variant="outline" onClick={handleCloseModal} disabled={isSubmitting}>
+              Annuler
+            </Button>
+            <Button
+              onClick={handleConfirmAction}
+              disabled={isSubmitting || (modalAction?.type === 'refuser' && !commentaireRH.trim())}
+              className={cn(
+                modalAction?.type === 'approuver'
+                  ? 'bg-success text-success-foreground hover:bg-success/90'
+                  : 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
+              )}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <motion.span
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <Clock className="w-4 h-4" />
+                  </motion.span>
+                  Traitement...
+                </span>
+              ) : (
+                modalAction?.type === 'approuver' ? 'Approuver' : 'Refuser'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
