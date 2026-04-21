@@ -159,6 +159,7 @@ export function PageConges() {
       titre: modalAction.type === 'approuver' ? 'Conge approuve' : 'Conge refuse',
       message: `La demande de conge de ${modalAction.demande.employe?.prenom} ${modalAction.demande.employe?.nom} a ete ${modalAction.type === 'approuver' ? 'approuvee' : 'refusee'}.`,
       type: modalAction.type === 'approuver' ? 'succes' : 'avertissement',
+      lu: false,
       destinataireId: modalAction.demande.employeId,
     })
     

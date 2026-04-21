@@ -175,6 +175,7 @@ export function PageDocuments() {
       titre: modalAction.type === 'approuver' ? 'Document pret' : 'Demande refusee',
       message: `La demande de ${LABELS_TYPE_DOCUMENT[modalAction.demande.typeDocument]} de ${modalAction.demande.employe?.prenom} ${modalAction.demande.employe?.nom} a ete ${modalAction.type === 'approuver' ? 'traitee' : 'refusee'}.`,
       type: modalAction.type === 'approuver' ? 'succes' : 'avertissement',
+      lu: false,
       destinataireId: modalAction.demande.employeId,
     })
     

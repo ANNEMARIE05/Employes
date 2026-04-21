@@ -117,6 +117,7 @@ export function ListeEmployes() {
         statut: donnees.statut || 'actif',
         soldeConges: donnees.soldeConges || 25,
         soldeRTT: donnees.soldeRTT || 10,
+        role: donnees.role || 'employe',
       }
       setEmployes([nouvelEmploye, ...employes])
     } else if (modeModal === 'edition' && employeSelectionne) {

@@ -2,17 +2,17 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, Check, Trash2, Calendar, FileText, Users, X } from 'lucide-react'
+import { Bell, Check, Trash2, Info, CheckCircle2, AlertTriangle, XCircle, X } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
 import { format, parseISO, formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 
 const ICONES_TYPE = {
-  conge: Calendar,
-  document: FileText,
-  employe: Users,
-  systeme: Bell,
+  info: Info,
+  succes: CheckCircle2,
+  avertissement: AlertTriangle,
+  erreur: XCircle,
 }
 
 export function DropdownNotifications() {
@@ -43,13 +43,9 @@ export function DropdownNotifications() {
   const handleNotificationClick = (notification: typeof notifications[0]) => {
     marquerCommeLu(notification.id)
     
-    // Naviguer selon le type
-    if (notification.type === 'conge') {
-      definirOngletActif('conges')
-    } else if (notification.type === 'document') {
-      definirOngletActif('documents')
-    } else if (notification.type === 'employe') {
-      definirOngletActif('employes')
+    // Naviguer selon le lien fourni par la notification (si present)
+    if (notification.lien) {
+      definirOngletActif(notification.lien)
     }
     
     setOuvert(false)
