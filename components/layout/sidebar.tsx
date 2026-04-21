@@ -127,16 +127,18 @@ export function Sidebar() {
       {isMobile && menuOuvert && (
         <button
           aria-label="Fermer le menu"
-          className="fixed inset-0 z-30 bg-black/40"
+          className="fixed inset-x-0 bottom-0 top-16 z-30 bg-black/40"
           onClick={basculerMenu}
         />
       )}
       <motion.aside
         className={cn(
-          'fixed left-0 top-0 h-screen bg-sidebar text-sidebar-foreground',
+          'fixed left-0 bg-sidebar text-sidebar-foreground overflow-hidden',
           'flex flex-col border-r border-sidebar-border z-40',
           'transition-all duration-300 ease-out',
-          isMobile && 'w-[85vw] max-w-[280px] shadow-xl'
+          isMobile
+            ? 'top-16 h-[calc(100dvh-4rem)] w-[88vw] max-w-[340px] shadow-xl rounded-r-md'
+            : 'top-0 h-screen'
         )}
         initial={false}
         animate={
@@ -148,11 +150,11 @@ export function Sidebar() {
         style={{ willChange: 'transform,width' }}
       >
         {/* Logo et toggle */}
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+        <div className="flex items-center justify-between gap-2 p-4 border-b border-sidebar-border min-w-0">
           <AnimatePresence mode="wait">
             {menuOuvert && (
               <motion.div
-                className="flex items-center gap-3"
+                className="flex items-center gap-3 min-w-0"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
@@ -161,9 +163,9 @@ export function Sidebar() {
                 <div className="w-8 h-8 bg-sidebar-primary flex items-center justify-center">
                   <span className="text-sidebar-primary-foreground font-bold text-sm">M</span>
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-bold text-base tracking-tight leading-none">MUFER</span>
-                  <span className="text-[10px] text-sidebar-primary tracking-widest">EMPLOYES</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-bold text-base tracking-tight leading-none truncate">MUFER</span>
+                  <span className="text-[10px] text-sidebar-primary tracking-widest truncate">EMPLOYES</span>
                 </div>
               </motion.div>
             )}
@@ -195,7 +197,7 @@ export function Sidebar() {
         </div>
 
         {/* Navigation principale */}
-        <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
+        <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto overscroll-contain">
           {menuFiltre.map((item, index) => {
             const estActif = ongletActif === item.id
             const Icone = item.icone
@@ -205,7 +207,7 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => handleChangerOnglet(item.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200',
+                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 min-w-0 overflow-hidden',
                   'relative group',
                   estActif 
                     ? 'bg-sidebar-accent text-sidebar-primary' 
@@ -242,7 +244,7 @@ export function Sidebar() {
                 <AnimatePresence mode="wait">
                   {(menuOuvert || isMobile) && (
                     <motion.span
-                      className="text-sm font-medium whitespace-nowrap"
+                      className="text-sm font-medium whitespace-nowrap truncate min-w-0"
                       initial={{ opacity: 0, width: 0 }}
                       animate={{ opacity: 1, width: 'auto' }}
                       exit={{ opacity: 0, width: 0 }}
@@ -275,7 +277,7 @@ export function Sidebar() {
                 key={item.id}
                 onClick={() => handleChangerOnglet(item.id)}
                 className={cn(
-                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200',
+                  'w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 min-w-0 overflow-hidden',
                   'group relative',
                   estActif 
                     ? 'bg-sidebar-accent text-sidebar-primary' 
@@ -287,7 +289,7 @@ export function Sidebar() {
                 <AnimatePresence mode="wait">
                   {(menuOuvert || isMobile) && (
                     <motion.span
-                      className="text-sm font-medium"
+                      className="text-sm font-medium truncate"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -304,7 +306,7 @@ export function Sidebar() {
           {utilisateurConnecte && (
             <motion.div
               className={cn(
-                'flex items-center gap-3 p-3 mt-2 rounded-sm bg-sidebar-accent/30',
+                'flex items-center gap-3 p-3 mt-2 rounded-sm bg-sidebar-accent/30 min-w-0 overflow-hidden',
                 'cursor-pointer hover:bg-sidebar-accent/50 transition-colors'
               )}
               whileHover={{ scale: 1.01 }}
@@ -352,7 +354,7 @@ export function Sidebar() {
             <AnimatePresence mode="wait">
               {(menuOuvert || isMobile) && (
                 <motion.span
-                  className="text-sm font-medium"
+                  className="text-sm font-medium truncate"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
