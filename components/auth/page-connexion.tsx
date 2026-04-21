@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Eye, EyeOff, ArrowRight, Users } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Loader } from '@/components/ui/loader'
+import { Input } from '@/components/ui/input'
 
 interface PageConnexionProps {
   onConnexion: (email: string, motDePasse: string) => Promise<void>
@@ -91,12 +92,12 @@ export function PageConnexion({ onConnexion }: PageConnexionProps) {
               <label className="text-sm font-medium text-foreground">
                 Adresse email
               </label>
-              <input
+              <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nom@entreprise.fr"
-                className="w-full px-4 py-3 bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors"
+                className="h-12 rounded-sm border-border bg-background px-4 py-3 text-base shadow-none"
               />
             </div>
 
@@ -114,12 +115,12 @@ export function PageConnexion({ onConnexion }: PageConnexionProps) {
                 </button>
               </div>
               <div className="relative">
-                <input
+                <Input
                   type={afficherMotDePasse ? 'text' : 'password'}
                   value={motDePasse}
                   onChange={(e) => setMotDePasse(e.target.value)}
                   placeholder="Entrez votre mot de passe"
-                  className="w-full px-4 py-3 pr-12 bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground transition-colors"
+                  className="h-12 rounded-sm border-border bg-background px-4 py-3 pr-12 text-base shadow-none"
                 />
                 <button
                   type="button"

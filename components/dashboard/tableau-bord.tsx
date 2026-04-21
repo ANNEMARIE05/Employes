@@ -115,32 +115,32 @@ export function TableauBord() {
     >
       {/* Banniere de bienvenue RH */}
       <motion.div
-        className="relative overflow-hidden bg-sidebar text-sidebar-foreground p-4 sm:p-6"
+        className="bg-card text-card-foreground border border-border rounded-sm p-4 sm:p-6"
         variants={itemVariants}
       >
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
             <img
               src={utilisateurConnecte?.avatar}
               alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
-              className="w-16 h-16 rounded-sm object-cover border-2 border-sidebar-primary hidden sm:block"
+              className="w-16 h-16 rounded-sm object-cover border border-border hidden sm:block"
             />
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs px-2 py-0.5 bg-sidebar-primary text-sidebar-primary-foreground font-medium rounded-sm">
+                <span className="text-xs px-2 py-0.5 bg-primary/15 text-primary font-medium rounded-sm">
                   Espace RH
                 </span>
-                <span className="text-xs px-2 py-0.5 bg-sidebar-accent text-sidebar-foreground font-medium rounded-sm">
+                <span className="text-xs px-2 py-0.5 bg-muted text-muted-foreground font-medium rounded-sm">
                   Administrateur
                 </span>
               </div>
               <h2 className="text-lg sm:text-xl font-semibold mb-1">
                 Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
               </h2>
-              <p className="text-sidebar-foreground/70 text-sm">
+              <p className="text-muted-foreground text-sm">
                 {totalEnAttente > 0 ? (
                   <>
-                    Vous avez <span className="text-sidebar-primary font-medium">{totalEnAttente} demande{totalEnAttente > 1 ? 's' : ''}</span> a traiter aujourd&apos;hui
+                    Vous avez <span className="text-primary font-medium">{totalEnAttente} demande{totalEnAttente > 1 ? 's' : ''}</span> a traiter aujourd&apos;hui
                   </>
                 ) : (
                   'Toutes les demandes ont ete traitees'
@@ -155,28 +155,22 @@ export function TableauBord() {
               <button
                 key={action.id}
                 onClick={() => definirOngletActif(action.id)}
-                className={`${action.couleur} group min-h-[74px] rounded-sm border border-sidebar-border/30 px-3 py-2 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary/40`}
+                className="group min-h-[74px] rounded-sm border border-border bg-background px-3 py-2 text-left transition-colors duration-200 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
               >
                 <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="shrink-0">{action.icone}</span>
+                  <span className="shrink-0 text-primary">{action.icone}</span>
                   {action.count !== null && (
-                    <span className={`rounded-sm px-1.5 py-0.5 text-xs font-medium ${action.nuanceCompteur}`}>
+                    <span className="rounded-sm px-1.5 py-0.5 text-xs font-medium bg-primary/15 text-primary">
                       {action.count}
                     </span>
                   )}
                 </div>
-                <div className="text-sm font-medium leading-tight">
+                <div className="text-sm font-medium leading-tight text-foreground">
                   {action.label}
                 </div>
               </button>
             ))}
           </div>
-        </div>
-        
-        {/* Decoration geometrique */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-10">
-          <div className="w-24 h-24 border-2 border-sidebar-primary" />
-          <div className="w-12 h-12 bg-sidebar-primary mt-12" />
         </div>
       </motion.div>
 

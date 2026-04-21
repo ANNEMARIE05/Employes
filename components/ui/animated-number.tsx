@@ -96,7 +96,7 @@ export function CounterCard({
 }: CounterCardProps) {
   return (
     <motion.div
-      className="p-4 sm:p-5 bg-card border border-border min-h-[128px] sm:min-h-[140px] flex flex-col justify-between hover:border-foreground/20 transition-colors duration-300 overflow-hidden"
+      className="p-4 sm:p-5 bg-card border border-border rounded-sm min-h-[128px] sm:min-h-[140px] flex flex-col justify-between transition-colors duration-300 overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: delai, duration: 0.5 }}

@@ -58,26 +58,26 @@ export function TableauBordEmploye() {
     >
       {/* Bannière de bienvenue employe */}
       <motion.div
-        className="relative overflow-hidden bg-sidebar text-sidebar-foreground p-4 sm:p-6"
+        className="bg-card text-card-foreground border border-border rounded-sm p-4 sm:p-6"
         variants={itemVariants}
       >
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex items-center gap-3 sm:gap-4">
             <img
               src={utilisateurConnecte?.avatar}
               alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
-              className="w-14 h-14 rounded-sm object-cover border-2 border-sidebar-primary"
+              className="w-14 h-14 rounded-sm object-cover border border-border"
             />
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs px-2 py-0.5 bg-sidebar-accent text-sidebar-foreground font-medium rounded-sm">
+                <span className="text-xs px-2 py-0.5 bg-primary/15 text-primary font-medium rounded-sm">
                   Espace Employe
                 </span>
               </div>
               <h2 className="text-lg sm:text-xl font-semibold">
                 Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
               </h2>
-              <p className="text-sidebar-foreground/70 text-sm">
+              <p className="text-muted-foreground text-sm">
                 {utilisateurConnecte?.poste} - {utilisateurConnecte?.departement}
               </p>
             </div>
@@ -85,8 +85,8 @@ export function TableauBordEmploye() {
           
           {/* Indicateur de demandes en cours */}
           {(congesEnAttente > 0 || documentsEnAttente > 0) && (
-            <div className="flex items-center gap-2 bg-sidebar-accent/50 px-3 py-2 rounded-sm">
-              <Clock className="w-4 h-4 text-sidebar-primary" />
+            <div className="flex items-center gap-2 bg-muted px-3 py-2 rounded-sm border border-border">
+              <Clock className="w-4 h-4 text-primary" />
               <span className="text-sm">
                 {congesEnAttente > 0 && `${congesEnAttente} conge${congesEnAttente > 1 ? 's' : ''} en attente`}
                 {congesEnAttente > 0 && documentsEnAttente > 0 && ' - '}
@@ -94,12 +94,6 @@ export function TableauBordEmploye() {
               </span>
             </div>
           )}
-        </div>
-        
-        {/* Décoration géométrique */}
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2 opacity-10">
-          <div className="w-20 h-20 border-2 border-sidebar-primary" />
-          <div className="w-10 h-10 bg-sidebar-primary mt-10" />
         </div>
       </motion.div>
 

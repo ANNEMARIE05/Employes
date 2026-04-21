@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
-import { Search, Bell, Menu } from 'lucide-react'
+import { Search, Bell, Menu, LogOut } from 'lucide-react'
 import { useState } from 'react'
 import {
   DropdownMenu,
@@ -69,7 +69,16 @@ interface HeaderProps {
 }
 
 export function Header({ onNouvelleDemande }: HeaderProps) {
-  const { ongletActif, menuOuvert, notifications, utilisateurConnecte, marquerCommeLu, definirOngletActif, basculerMenu } = useAppStore()
+  const {
+    ongletActif,
+    menuOuvert,
+    notifications,
+    utilisateurConnecte,
+    marquerCommeLu,
+    definirOngletActif,
+    basculerMenu,
+    deconnecter,
+  } = useAppStore()
   const [rechercheOuverte, setRechercheOuverte] = useState(false)
   const isMobile = useIsMobile()
   
@@ -259,12 +268,34 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
                 {utilisateurConnecte.departement}
               </p>
             </div>
-            <motion.img
-              src={utilisateurConnecte.avatar}
-              alt={utilisateurConnecte.prenom}
-              className="w-9 h-9 rounded-sm object-cover border border-border"
-              whileHover={{ scale: 1.05 }}
-            />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <motion.button
+                  className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  aria-label="Ouvrir le menu profil"
+                >
+                  <img
+                    src={utilisateurConnecte.avatar}
+                    alt={utilisateurConnecte.prenom}
+                    className="w-9 h-9 rounded-sm object-cover border border-border"
+                  />
+                </motion.button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel>Mon profil</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-destructive focus:text-destructive cursor-pointer"
+                  onClick={deconnecter}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Déconnexion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </motion.div>
         )}
       </div>

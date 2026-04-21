@@ -116,11 +116,11 @@ export function MonProfil() {
         variants={itemVariants}
       >
         {/* Banniere */}
-        <div className="h-32 bg-sidebar relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-sidebar via-sidebar to-sidebar-accent/50" />
+        <div className="h-32 bg-primary/10 border-b border-border relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/15 via-primary/10 to-accent/20" />
           <div className="absolute right-6 top-6 flex gap-3 opacity-20">
-            <div className="w-16 h-16 border-2 border-sidebar-primary" />
-            <div className="w-8 h-8 bg-sidebar-primary mt-8" />
+            <div className="w-16 h-16 border-2 border-primary" />
+            <div className="w-8 h-8 bg-primary mt-8" />
           </div>
         </div>
         
