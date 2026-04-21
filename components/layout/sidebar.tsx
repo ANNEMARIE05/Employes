@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
@@ -16,6 +16,10 @@ import {
   ChevronRight,
   Bell,
   Cog,
+  User,
+  CalendarDays,
+  FileCheck,
+  type LucideIcon,
 } from 'lucide-react'
 import {
   AlertDialog,
@@ -27,19 +31,31 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import type { RoleUtilisateur } from '@/types'
 
-const elementsMenu = [
-  { id: 'tableau-bord', label: 'Tableau de bord', icone: LayoutDashboard },
-  { id: 'employes', label: 'Employés', icone: Users },
-  { id: 'conges', label: 'Congés', icone: Calendar },
-  { id: 'documents', label: 'Documents', icone: FileText },
-  { id: 'statistiques', label: 'Statistiques', icone: BarChart3 },
-  { id: 'notifications', label: 'Notifications', icone: Bell },
+interface MenuItem {
+  id: string
+  label: string
+  icone: LucideIcon
+  roles: RoleUtilisateur[]
+}
+
+// Menu items avec les roles autorises
+const elementsMenu: MenuItem[] = [
+  { id: 'tableau-bord', label: 'Tableau de bord', icone: LayoutDashboard, roles: ['rh', 'manager', 'employe'] },
+  { id: 'mon-profil', label: 'Mon profil', icone: User, roles: ['employe', 'manager'] },
+  { id: 'mes-conges', label: 'Mes congés', icone: CalendarDays, roles: ['employe', 'manager'] },
+  { id: 'mes-documents', label: 'Mes documents', icone: FileCheck, roles: ['employe', 'manager'] },
+  { id: 'employes', label: 'Employés', icone: Users, roles: ['rh', 'manager'] },
+  { id: 'conges', label: 'Gestion Congés', icone: Calendar, roles: ['rh'] },
+  { id: 'documents', label: 'Gestion Documents', icone: FileText, roles: ['rh'] },
+  { id: 'statistiques', label: 'Statistiques', icone: BarChart3, roles: ['rh', 'manager'] },
+  { id: 'notifications', label: 'Notifications', icone: Bell, roles: ['rh', 'manager', 'employe'] },
 ]
 
-const elementsSecondaires = [
-  { id: 'parametrage', label: 'Paramétrage', icone: Cog },
-  { id: 'parametres', label: 'Paramètres', icone: Settings },
+const elementsSecondaires: MenuItem[] = [
+  { id: 'parametrage', label: 'Paramétrage', icone: Cog, roles: ['rh'] },
+  { id: 'parametres', label: 'Paramètres', icone: Settings, roles: ['rh', 'manager', 'employe'] },
 ]
 
 export function Sidebar() {
@@ -56,6 +72,18 @@ export function Sidebar() {
   } = useAppStore()
 
   const notificationsNonLues = notifications.filter(n => !n.lu).length
+  const roleUtilisateur = utilisateurConnecte?.role || 'employe'
+
+  // Filtrer les menus selon le role
+  const menuFiltre = useMemo(() => 
+    elementsMenu.filter(item => item.roles.includes(roleUtilisateur)),
+    [roleUtilisateur]
+  )
+
+  const menuSecondaireFiltre = useMemo(() => 
+    elementsSecondaires.filter(item => item.roles.includes(roleUtilisateur)),
+    [roleUtilisateur]
+  )
 
   // Scroll to top when changing page
   const handleChangerOnglet = (onglet: string) => {
@@ -67,6 +95,20 @@ export function Sidebar() {
     deconnecter()
     setConfirmationDeconnexionOuverte(false)
   }
+
+  // Badge de role
+  const getRoleBadge = () => {
+    switch (roleUtilisateur) {
+      case 'rh':
+        return { label: 'RH', color: 'bg-primary text-primary-foreground' }
+      case 'manager':
+        return { label: 'Manager', color: 'bg-warning/20 text-warning' }
+      default:
+        return { label: 'Employé', color: 'bg-muted text-muted-foreground' }
+    }
+  }
+
+  const roleBadge = getRoleBadge()
 
   return (
     <>
@@ -126,7 +168,7 @@ export function Sidebar() {
 
         {/* Navigation principale */}
         <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
-          {elementsMenu.map((item, index) => {
+          {menuFiltre.map((item, index) => {
             const estActif = ongletActif === item.id
             const Icone = item.icone
             
@@ -196,7 +238,7 @@ export function Sidebar() {
 
         {/* Section bas */}
         <div className="border-t border-sidebar-border py-4 px-2 space-y-1">
-          {elementsSecondaires.map((item) => {
+          {menuSecondaireFiltre.map((item) => {
             const Icone = item.icone
             const estActif = ongletActif === item.id
             
@@ -252,9 +294,14 @@ export function Sidebar() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <p className="text-sm font-medium truncate">
-                      {utilisateurConnecte.prenom} {utilisateurConnecte.nom}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium truncate">
+                        {utilisateurConnecte.prenom} {utilisateurConnecte.nom}
+                      </p>
+                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded-sm font-medium', roleBadge.color)}>
+                        {roleBadge.label}
+                      </span>
+                    </div>
                     <p className="text-xs text-sidebar-foreground/60 truncate">
                       {utilisateurConnecte.poste}
                     </p>

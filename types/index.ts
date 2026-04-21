@@ -1,5 +1,7 @@
 // Types principaux de l'application RH
 
+export type RoleUtilisateur = 'rh' | 'manager' | 'employe'
+
 export interface Employe {
   id: string
   prenom: string
@@ -14,6 +16,7 @@ export interface Employe {
   manager?: string
   soldeConges: number
   soldeRTT: number
+  role: RoleUtilisateur
 }
 
 export interface DemandeConge {

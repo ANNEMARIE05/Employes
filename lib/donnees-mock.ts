@@ -22,6 +22,7 @@ export const employesMock: Employe[] = [
     statut: 'actif',
     soldeConges: 25,
     soldeRTT: 10,
+    role: 'rh',
   },
   {
     id: '2',
@@ -37,6 +38,7 @@ export const employesMock: Employe[] = [
     manager: '1',
     soldeConges: 18,
     soldeRTT: 8,
+    role: 'employe',
   },
   {
     id: '3',
@@ -52,6 +54,7 @@ export const employesMock: Employe[] = [
     manager: '1',
     soldeConges: 12,
     soldeRTT: 5,
+    role: 'manager',
   },
   {
     id: '4',
@@ -67,6 +70,7 @@ export const employesMock: Employe[] = [
     manager: '3',
     soldeConges: 22,
     soldeRTT: 9,
+    role: 'employe',
   },
   {
     id: '5',
@@ -82,6 +86,7 @@ export const employesMock: Employe[] = [
     manager: '1',
     soldeConges: 20,
     soldeRTT: 7,
+    role: 'employe',
   },
   {
     id: '6',
@@ -97,6 +102,7 @@ export const employesMock: Employe[] = [
     manager: '1',
     soldeConges: 25,
     soldeRTT: 10,
+    role: 'employe',
   },
   {
     id: '7',
@@ -112,6 +118,7 @@ export const employesMock: Employe[] = [
     manager: '1',
     soldeConges: 25,
     soldeRTT: 10,
+    role: 'employe',
   },
   {
     id: '8',
@@ -127,6 +134,7 @@ export const employesMock: Employe[] = [
     manager: '2',
     soldeConges: 15,
     soldeRTT: 6,
+    role: 'employe',
   },
 ]
 
