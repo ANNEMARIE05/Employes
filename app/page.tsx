@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useAppStore } from '@/store/useAppStore'
@@ -20,7 +20,6 @@ import { PageHistorique } from '@/components/historique/page-historique'
 import { PageParametres } from '@/components/parametres/page-parametres'
 import { PageParametrage } from '@/components/parametrage/page-parametrage'
 import { PageAbsences } from '@/components/absences/page-absences'
-import { PageConnexion } from '@/components/auth/page-connexion'
 import { LoaderPleinEcran } from '@/components/ui/loader'
 import { FormulaireConge } from '@/components/conges/formulaire-conge'
 import { FormulaireDocument } from '@/components/documents/formulaire-document'
@@ -48,6 +47,9 @@ const ONGLET_VERS_ROUTE: Record<string, string> = Object.fromEntries(
   Object.entries(ROUTE_VERS_ONGLET).map(([route, onglet]) => [onglet, route])
 )
 
+const estRouteValide = (page: string | null): page is string =>
+  Boolean(page && (page in ROUTE_VERS_ONGLET || page === 'formulaire-conge' || page === 'formulaire-document'))
+
 function ApplicationContent() {
   const [chargementInitial, setChargementInitial] = useState(true)
   const [formulaireCongeOuvert, setFormulaireCongeOuvert] = useState(false)
@@ -69,6 +71,12 @@ function ApplicationContent() {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  const remplacerPageDansURL = useCallback((page: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', page)
+    router.replace(`${pathname}?${params.toString()}`)
+  }, [pathname, router, searchParams])
 
   // Simulation chargement initial
   useEffect(() => {
@@ -104,7 +112,7 @@ function ApplicationContent() {
     
     // Rediriger par defaut vers le tableau de bord
     definirOngletActif('tableau-bord')
-    router.replace(`${pathname}?page=tableau-bord`)
+    remplacerPageDansURL('tableau-bord')
     // Force le retour en haut meme si l'onglet ne change pas visuellement
     window.scrollTo({ top: 0, behavior: 'auto' })
   }
@@ -130,9 +138,9 @@ function ApplicationContent() {
     }
 
     const page = searchParams.get('page')
-    if (!page) {
+    if (!estRouteValide(page)) {
       definirOngletActif('tableau-bord')
-      router.replace(`${pathname}?page=tableau-bord`)
+      remplacerPageDansURL('tableau-bord')
       routeInitialisee.current = true
       return
     }
@@ -154,7 +162,7 @@ function ApplicationContent() {
     const onglet = ROUTE_VERS_ONGLET[page] || 'tableau-bord'
     definirOngletActif(onglet)
     routeInitialisee.current = true
-  }, [definirOngletActif, pathname, router, searchParams])
+  }, [definirOngletActif, remplacerPageDansURL, searchParams])
 
   // Synchronisation onglet -> URL
   useEffect(() => {
@@ -164,9 +172,9 @@ function ApplicationContent() {
     const pageActuelle = searchParams.get('page')
     const routeSouhaitee = ONGLET_VERS_ROUTE[ongletActif] || 'tableau-bord'
     if (pageActuelle !== routeSouhaitee) {
-      router.replace(`${pathname}?page=${routeSouhaitee}`)
+      remplacerPageDansURL(routeSouhaitee)
     }
-  }, [ongletActif, pathname, router, searchParams])
+  }, [ongletActif, remplacerPageDansURL, searchParams])
 
   // En version telephone, fermer le menu seulement lors du passage desktop -> mobile.
   useEffect(() => {
@@ -225,9 +233,10 @@ function ApplicationContent() {
     return <LoaderPleinEcran texte="MUFER Employes" />
   }
 
-  // Page de connexion si non authentifié
+  // Si non authentifié, forcer la vraie route /login
   if (!estAuthentifie) {
-    return <PageConnexion onConnexion={handleConnexion} />
+    router.replace('/login')
+    return <LoaderPleinEcran texte="MUFER Employes" />
   }
 
   return (

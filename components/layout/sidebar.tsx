@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
 import { useIsMobile } from '@/components/ui/use-mobile'
@@ -65,6 +66,7 @@ const elementsSecondaires: MenuItem[] = [
 
 export function Sidebar() {
   const [confirmationDeconnexionOuverte, setConfirmationDeconnexionOuverte] = useState(false)
+  const router = useRouter()
   
   const { 
     menuOuvert, 
@@ -102,6 +104,7 @@ export function Sidebar() {
 
   const handleDeconnexion = () => {
     deconnecter()
+    router.replace('/login')
     setConfirmationDeconnexionOuverte(false)
   }
 
