@@ -75,14 +75,14 @@ export function ModalEmploye({ employe, mode, onFermer, onSauvegarder }: ModalEm
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* Overlay */}
         <motion.div
-          className="absolute inset-0 bg-black/50"
+          className="absolute inset-0 bg-foreground/20 backdrop-blur-sm"
           onClick={onFermer}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -91,7 +91,7 @@ export function ModalEmploye({ employe, mode, onFermer, onSauvegarder }: ModalEm
 
         {/* Modal */}
         <motion.div
-          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-card border border-border rounded-sm shadow-xl"
+          className="relative w-full max-w-2xl max-h-[calc(100vh-2rem)] overflow-y-auto bg-card border border-border rounded-sm shadow-xl my-auto"
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}

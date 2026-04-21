@@ -6,14 +6,17 @@ import { X, FileText, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { LABELS_TYPE_DOCUMENT, type TypeDocument } from '@/types'
 import { Loader } from '@/components/ui/loader'
+import { employesMock } from '@/lib/donnees-mock'
 
 interface FormulaireDocumentProps {
   onFermer: () => void
+  afficherSelectionEmploye?: boolean
 }
 
-export function FormulaireDocument({ onFermer }: FormulaireDocumentProps) {
+export function FormulaireDocument({ onFermer, afficherSelectionEmploye = false }: FormulaireDocumentProps) {
   const [chargement, setChargement] = useState(false)
   const [formData, setFormData] = useState({
+    employeId: employesMock[0]?.id ?? '',
     typeDocument: 'attestation_emploi' as TypeDocument,
     commentaire: '',
     urgent: false,
@@ -32,14 +35,14 @@ export function FormulaireDocument({ onFermer }: FormulaireDocumentProps) {
 
   return (
     <motion.div
-      className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 bg-foreground/20 backdrop-blur-sm z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       onClick={onFermer}
     >
       <motion.div
-        className="bg-card border border-border rounded-sm w-full max-w-lg shadow-xl"
+        className="bg-card border border-border rounded-sm w-full max-w-lg shadow-xl my-auto max-h-[calc(100vh-2rem)] overflow-y-auto"
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -66,6 +69,24 @@ export function FormulaireDocument({ onFermer }: FormulaireDocumentProps) {
 
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="p-5 space-y-5">
+          {afficherSelectionEmploye && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Employe concerne</label>
+              <select
+                value={formData.employeId}
+                onChange={(e) => setFormData({ ...formData, employeId: e.target.value })}
+                className="w-full px-4 py-2.5 bg-background border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                required
+              >
+                {employesMock.map((employe) => (
+                  <option key={employe.id} value={employe.id}>
+                    {employe.prenom} {employe.nom}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Type de document */}
           <div className="space-y-2">
             <label className="text-sm font-medium">Type de document</label>

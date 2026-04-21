@@ -3,8 +3,7 @@
 import { motion } from 'framer-motion'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
-import { Search, Bell, Plus, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Search, Bell, Menu } from 'lucide-react'
 import { useState } from 'react'
 import {
   DropdownMenu,
@@ -16,6 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { useIsMobile } from '@/components/ui/use-mobile'
 
 const titresPages: Record<string, { titre: string; description: string }> = {
   'tableau-bord': { 
@@ -69,8 +69,9 @@ interface HeaderProps {
 }
 
 export function Header({ onNouvelleDemande }: HeaderProps) {
-  const { ongletActif, menuOuvert, notifications, utilisateurConnecte, marquerCommeLu, definirOngletActif } = useAppStore()
+  const { ongletActif, menuOuvert, notifications, utilisateurConnecte, marquerCommeLu, definirOngletActif, basculerMenu } = useAppStore()
   const [rechercheOuverte, setRechercheOuverte] = useState(false)
+  const isMobile = useIsMobile()
   
   const pageInfo = titresPages[ongletActif] || { titre: 'RH Élite', description: '' }
   const notificationsNonLues = notifications.filter(n => !n.lu).length
@@ -87,21 +88,31 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
     <motion.header
       className={cn(
         'fixed top-0 right-0 h-16 bg-white',
-        'border-b border-border z-30 flex items-center justify-between px-6',
+        'border-b border-border z-30 flex items-center justify-between px-3 sm:px-6',
         'transition-all duration-300'
       )}
       style={{
-        left: menuOuvert ? 260 : 72,
+        left: isMobile ? 0 : (menuOuvert ? 260 : 72),
       }}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       {/* Titre de la page */}
-      <div className="flex flex-col">
+      <div className="flex items-center gap-2 min-w-0">
+        {isMobile && (
+          <button
+            onClick={basculerMenu}
+            className="p-2 rounded-sm hover:bg-muted text-muted-foreground hover:text-foreground transition-colors shrink-0"
+            aria-label={menuOuvert ? 'Fermer le menu' : 'Ouvrir le menu'}
+          >
+            <Menu className="w-4 h-4" />
+          </button>
+        )}
+        <div className="flex flex-col min-w-0">
         <motion.h1
           key={ongletActif}
-          className="text-lg font-semibold text-foreground"
+          className="text-base sm:text-lg font-semibold text-foreground truncate"
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.3 }}
@@ -110,17 +121,18 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
         </motion.h1>
         <motion.p
           key={`${ongletActif}-desc`}
-          className="text-xs text-muted-foreground"
+          className="text-[11px] sm:text-xs text-muted-foreground truncate"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.1 }}
         >
           {pageInfo.description}
         </motion.p>
+        </div>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Date */}
         <motion.span
           className="text-sm text-muted-foreground hidden lg:block capitalize"
@@ -136,7 +148,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
           className={cn(
             'flex items-center border border-border rounded-sm overflow-hidden',
             'transition-all duration-300',
-            rechercheOuverte ? 'w-64' : 'w-10'
+            rechercheOuverte ? 'w-40 sm:w-64' : 'w-9 sm:w-10'
           )}
         >
           <button
@@ -222,7 +234,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
               </div>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
+            <DropdownMenuItem
               className="justify-center text-primary cursor-pointer"
               onClick={() => definirOngletActif('notifications')}
             >
@@ -230,23 +242,6 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* Bouton nouvelle demande */}
-        {(ongletActif === 'conges' || ongletActif === 'documents' || ongletActif === 'mes-conges' || ongletActif === 'mes-documents') && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <Button
-              onClick={onNouvelleDemande}
-              className="h-9 px-4 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-sm"
-            >
-              <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">Nouvelle demande</span>
-            </Button>
-          </motion.div>
-        )}
 
         {/* Avatar utilisateur */}
         {utilisateurConnecte && (

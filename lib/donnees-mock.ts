@@ -321,6 +321,7 @@ export const notificationsMock: Notification[] = [
     message: 'Thomas Martin a soumis une demande de RTT pour le 28 avril.',
     type: 'info',
     lu: false,
+    destinataireId: '1',
     dateCreation: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 min ago
   },
   {
@@ -329,6 +330,7 @@ export const notificationsMock: Notification[] = [
     message: 'Votre demande de congé du 25 avril au 2 mai a été approuvée.',
     type: 'succes',
     lu: false,
+    destinataireId: '2',
     dateCreation: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
   },
   {
@@ -337,6 +339,7 @@ export const notificationsMock: Notification[] = [
     message: 'Votre fiche de paie de mars est maintenant disponible au téléchargement.',
     type: 'info',
     lu: true,
+    destinataireId: '2',
     dateCreation: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
   },
   {
@@ -345,6 +348,7 @@ export const notificationsMock: Notification[] = [
     message: 'Il vous reste 18 jours de congés à prendre avant la fin de l\'année.',
     type: 'avertissement',
     lu: true,
+    destinataireId: '2',
     dateCreation: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
   },
   {
@@ -353,6 +357,7 @@ export const notificationsMock: Notification[] = [
     message: 'Lucas Petit a demandé un certificat de travail.',
     type: 'info',
     lu: false,
+    destinataireId: '1',
     dateCreation: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 min ago
   },
 ]

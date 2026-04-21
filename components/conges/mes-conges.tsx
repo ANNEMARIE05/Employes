@@ -75,14 +75,14 @@ export function MesConges() {
         </Button>
       </div>
 
-      {/* Soldes */}
+      {/* Jours restants */}
       <div className="grid grid-cols-2 gap-4">
         <motion.div 
           className="p-5 bg-card border border-border"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <p className="text-sm text-muted-foreground mb-1">Solde congés payés</p>
+          <p className="text-sm text-muted-foreground mb-1">Congés payés restants</p>
           <p className="text-3xl font-bold">{utilisateurConnecte?.soldeConges || 0} <span className="text-lg font-normal text-muted-foreground">jours</span></p>
         </motion.div>
         <motion.div 
@@ -91,7 +91,7 @@ export function MesConges() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <p className="text-sm text-muted-foreground mb-1">Solde RTT</p>
+          <p className="text-sm text-muted-foreground mb-1">RTT restants</p>
           <p className="text-3xl font-bold">{utilisateurConnecte?.soldeRTT || 0} <span className="text-lg font-normal text-muted-foreground">jours</span></p>
         </motion.div>
       </div>

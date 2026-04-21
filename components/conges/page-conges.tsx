@@ -9,10 +9,10 @@ import {
   XCircle, 
   Filter,
   Search,
-  SlidersHorizontal,
   X,
   MessageSquare,
   AlertTriangle,
+  Plus,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
@@ -59,10 +59,11 @@ export function PageConges() {
   const { modifierStatutConge, ajouterNotification } = useAppStore()
   const [filtreStatut, setFiltreStatut] = useState<FiltreStatut>('tous')
   const [filtreType, setFiltreType] = useState<string>('')
+  const [dateDebutFiltre, setDateDebutFiltre] = useState('')
+  const [dateFinFiltre, setDateFinFiltre] = useState('')
   const [recherche, setRecherche] = useState('')
   const [formulaireOuvert, setFormulaireOuvert] = useState(false)
   const [pageActuelle, setPageActuelle] = useState(1)
-  const [filtresAvancesOuverts, setFiltresAvancesOuverts] = useState(false)
   
   // Modal de validation/refus
   const [modalAction, setModalAction] = useState<{
@@ -79,11 +80,13 @@ export function PageConges() {
     return demandesEnrichies.filter(demande => {
       const correspondStatut = filtreStatut === 'tous' || demande.statut === filtreStatut
       const correspondType = !filtreType || demande.type === filtreType
+      const correspondDateDebut = !dateDebutFiltre || demande.dateDebut >= dateDebutFiltre
+      const correspondDateFin = !dateFinFiltre || demande.dateFin <= dateFinFiltre
       const correspondRecherche = recherche === '' || 
         `${demande.employe?.prenom} ${demande.employe?.nom}`.toLowerCase().includes(recherche.toLowerCase())
-      return correspondStatut && correspondRecherche && correspondType
+      return correspondStatut && correspondRecherche && correspondType && correspondDateDebut && correspondDateFin
     })
-  }, [demandesEnrichies, filtreStatut, filtreType, recherche])
+  }, [demandesEnrichies, filtreStatut, filtreType, recherche, dateDebutFiltre, dateFinFiltre])
 
   // Pagination
   const totalPages = Math.ceil(demandesFiltrees.length / ELEMENTS_PAR_PAGE)
@@ -104,6 +107,12 @@ export function PageConges() {
     approuve: demandesEnrichies.filter(d => d.statut === 'approuve').length,
     refuse: demandesEnrichies.filter(d => d.statut === 'refuse').length,
   }
+  
+  const stats = {
+    total: demandesEnrichies.length,
+    enAttente: statsStatut.en_attente,
+    traitees: statsStatut.approuve + statsStatut.refuse,
+  }
 
   const filtresStatut: { id: FiltreStatut; label: string; icone: React.ReactNode; count?: number }[] = [
     { id: 'tous', label: 'Toutes', icone: <Calendar className="w-4 h-4" /> },
@@ -116,10 +125,12 @@ export function PageConges() {
     setRecherche('')
     setFiltreStatut('tous')
     setFiltreType('')
+    setDateDebutFiltre('')
+    setDateFinFiltre('')
     setPageActuelle(1)
   }
 
-  const filtresActifs = recherche || filtreStatut !== 'tous' || filtreType
+  const filtresActifs = recherche || filtreStatut !== 'tous' || filtreType || dateDebutFiltre || dateFinFiltre
 
   // Handlers pour approuver/refuser
   const handleOpenModal = (type: 'approuver' | 'refuser', demande: DemandeConge) => {
@@ -148,6 +159,7 @@ export function PageConges() {
       titre: modalAction.type === 'approuver' ? 'Conge approuve' : 'Conge refuse',
       message: `La demande de conge de ${modalAction.demande.employe?.prenom} ${modalAction.demande.employe?.nom} a ete ${modalAction.type === 'approuver' ? 'approuvee' : 'refusee'}.`,
       type: modalAction.type === 'approuver' ? 'succes' : 'avertissement',
+      destinataireId: modalAction.demande.employeId,
     })
     
     setIsSubmitting(false)
@@ -172,7 +184,61 @@ export function PageConges() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
+      {/* En-tête + action */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+        <div className="min-w-0">
+          <h2 className="text-base sm:text-lg font-semibold">Demandes de congés</h2>
+          <p className="text-xs sm:text-sm text-muted-foreground">
+            Traitez les demandes et suivez l&apos;historique
+          </p>
+        </div>
+        <Button
+          onClick={() => setFormulaireOuvert(true)}
+          className="gap-2 rounded-sm"
+        >
+          <Plus className="w-4 h-4" />
+          Nouvelle demande
+        </Button>
+      </div>
+
+      {/* Stats */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="p-4 sm:p-5 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4">
+          <div className="p-2.5 sm:p-3 bg-muted rounded-sm">
+            <Calendar className="w-5 h-5 text-muted-foreground" />
+          </div>
+          <div>
+            <p className="text-xl sm:text-2xl font-semibold">{stats.total}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Total demandes</p>
+          </div>
+        </div>
+        
+        <div className="p-4 sm:p-5 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4">
+          <div className="p-2.5 sm:p-3 bg-warning/10 rounded-sm">
+            <Clock className="w-5 h-5 text-warning" />
+          </div>
+          <div>
+            <p className="text-xl sm:text-2xl font-semibold">{stats.enAttente}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">En attente</p>
+          </div>
+        </div>
+        
+        <div className="p-4 sm:p-5 bg-card border border-border rounded-sm flex items-center gap-3 sm:gap-4">
+          <div className="p-2.5 sm:p-3 bg-success/10 rounded-sm">
+            <CheckCircle className="w-5 h-5 text-success" />
+          </div>
+          <div>
+            <p className="text-xl sm:text-2xl font-semibold">{stats.traitees}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground">Traitées</p>
+          </div>
+        </div>
+      </motion.div>
+
       {/* Filtres statut */}
       <motion.div
         className="flex flex-wrap gap-2"
@@ -184,7 +250,7 @@ export function PageConges() {
             key={filtre.id}
             onClick={() => handleFiltreChange(setFiltreStatut, filtre.id)}
             className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-sm border transition-all',
+              'flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-sm border transition-all',
               filtreStatut === filtre.id
                 ? 'bg-primary text-primary-foreground border-primary'
                 : 'bg-card border-border hover:border-primary/50'
@@ -193,7 +259,7 @@ export function PageConges() {
             whileTap={{ scale: 0.98 }}
           >
             {filtre.icone}
-            <span className="text-sm font-medium">{filtre.label}</span>
+            <span className="text-xs sm:text-sm font-medium">{filtre.label}</span>
             {filtre.count !== undefined && (
               <span className={cn(
                 'text-xs px-1.5 py-0.5 rounded-sm',
@@ -210,7 +276,7 @@ export function PageConges() {
 
       {/* Barre de recherche et filtres */}
       <motion.div
-        className="flex flex-wrap gap-4 items-center"
+        className="flex flex-wrap gap-3 sm:gap-4 items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
@@ -239,6 +305,22 @@ export function PageConges() {
             ))}
           </select>
         </div>
+
+        <input
+          type="date"
+          value={dateDebutFiltre}
+          onChange={(e) => handleFiltreChange(setDateDebutFiltre, e.target.value)}
+          className="px-3 py-2.5 bg-card border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+          aria-label="Date de debut"
+        />
+
+        <input
+          type="date"
+          value={dateFinFiltre}
+          onChange={(e) => handleFiltreChange(setDateFinFiltre, e.target.value)}
+          className="px-3 py-2.5 bg-card border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+          aria-label="Date de fin"
+        />
 
         {/* Bouton reinitialiser */}
         {filtresActifs && (
@@ -277,20 +359,20 @@ export function PageConges() {
           {demandesPaginees.map((demande, index) => (
             <motion.div
               key={demande.id}
-              className="p-5 bg-card border border-border rounded-sm hover:border-primary/30 transition-colors"
+              className="p-4 sm:p-5 bg-card border border-border rounded-sm hover:border-primary/30 transition-colors"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ delay: index * 0.05 }}
               layout
             >
-              <div className="flex flex-col md:flex-row md:items-center gap-4">
+              <div className="flex flex-col md:flex-row md:items-center gap-3 sm:gap-4">
                 {/* Employe */}
                 <div className="flex items-center gap-3 flex-1">
                   <img
                     src={demande.employe?.avatar}
                     alt={`${demande.employe?.prenom} ${demande.employe?.nom}`}
-                    className="w-12 h-12 rounded-sm object-cover"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-sm object-cover"
                   />
                   <div>
                     <p className="font-medium">
@@ -311,7 +393,7 @@ export function PageConges() {
                 </div>
 
                 {/* Nombre de jours */}
-                <div className="text-center px-4">
+                <div className="text-center px-2 sm:px-4">
                   <p className="text-lg font-semibold">{demande.nombreJours}</p>
                   <p className="text-xs text-muted-foreground">jour{demande.nombreJours > 1 ? 's' : ''}</p>
                 </div>
@@ -355,12 +437,12 @@ export function PageConges() {
               {(demande.motif || demande.commentaireRH) && (
                 <div className="mt-4 pt-4 border-t border-border">
                   {demande.motif && (
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       <span className="font-medium text-foreground">Motif :</span> {demande.motif}
                     </p>
                   )}
                   {demande.commentaireRH && (
-                    <p className="text-sm text-muted-foreground mt-1">
+                    <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                       <span className="font-medium text-foreground">Commentaire RH :</span> {demande.commentaireRH}
                     </p>
                   )}
@@ -441,7 +523,10 @@ export function PageConges() {
       {/* Modal formulaire */}
       <AnimatePresence>
         {formulaireOuvert && (
-          <FormulaireConge onFermer={() => setFormulaireOuvert(false)} />
+          <FormulaireConge
+            onFermer={() => setFormulaireOuvert(false)}
+            afficherSelectionEmploye
+          />
         )}
       </AnimatePresence>
 

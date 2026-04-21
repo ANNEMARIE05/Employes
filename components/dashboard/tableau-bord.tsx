@@ -77,45 +77,49 @@ export function TableauBord() {
       label: 'Gerer les conges', 
       icone: <Calendar className="w-5 h-5" />, 
       count: congesEnAttente,
-      couleur: 'bg-primary/10 text-primary hover:bg-primary/20' 
+      couleur: 'bg-primary/10 text-primary hover:bg-primary/20',
+      nuanceCompteur: 'bg-primary/20 text-primary'
     },
     { 
       id: 'documents', 
       label: 'Traiter documents', 
       icone: <FileText className="w-5 h-5" />, 
       count: documentsEnAttente,
-      couleur: 'bg-success/10 text-success hover:bg-success/20' 
+      couleur: 'bg-success/10 text-success hover:bg-success/20',
+      nuanceCompteur: 'bg-success/20 text-success'
     },
     { 
       id: 'employes', 
       label: 'Voir employes', 
       icone: <Users className="w-5 h-5" />, 
       count: null,
-      couleur: 'bg-muted text-muted-foreground hover:bg-muted/80' 
+      couleur: 'bg-muted text-muted-foreground hover:bg-muted/80',
+      nuanceCompteur: 'bg-background/70 text-muted-foreground'
     },
     { 
       id: 'statistiques', 
       label: 'Statistiques', 
       icone: <TrendingUp className="w-5 h-5" />, 
       count: null,
-      couleur: 'bg-muted text-muted-foreground hover:bg-muted/80' 
+      couleur: 'bg-muted text-muted-foreground hover:bg-muted/80',
+      nuanceCompteur: 'bg-background/70 text-muted-foreground'
     },
   ]
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-4 sm:space-y-6"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
       {/* Banniere de bienvenue RH */}
       <motion.div
-        className="relative overflow-hidden bg-sidebar text-sidebar-foreground p-6"
+        className="relative overflow-hidden bg-sidebar text-sidebar-foreground p-4 sm:p-6"
         variants={itemVariants}
       >
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <img
               src={utilisateurConnecte?.avatar}
               alt={`${utilisateurConnecte?.prenom} ${utilisateurConnecte?.nom}`}
@@ -130,7 +134,7 @@ export function TableauBord() {
                   Administrateur
                 </span>
               </div>
-              <h2 className="text-xl font-semibold mb-1">
+              <h2 className="text-lg sm:text-xl font-semibold mb-1">
                 Bonjour, {utilisateurConnecte?.prenom || 'Utilisateur'}
               </h2>
               <p className="text-sidebar-foreground/70 text-sm">
@@ -146,23 +150,25 @@ export function TableauBord() {
           </div>
           
           {/* Actions rapides */}
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full lg:w-auto">
             {actionsRapides.map((action) => (
-              <Button
+              <button
                 key={action.id}
                 onClick={() => definirOngletActif(action.id)}
-                variant="ghost"
-                size="sm"
-                className={`${action.couleur} gap-2 rounded-sm`}
+                className={`${action.couleur} group min-h-[74px] rounded-sm border border-sidebar-border/30 px-3 py-2 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-primary/40`}
               >
-                {action.icone}
-                {action.label}
-                {action.count !== null && action.count > 0 && (
-                  <span className="text-xs px-1.5 py-0.5 bg-background/20 rounded-sm">
-                    {action.count}
-                  </span>
-                )}
-              </Button>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <span className="shrink-0">{action.icone}</span>
+                  {action.count !== null && (
+                    <span className={`rounded-sm px-1.5 py-0.5 text-xs font-medium ${action.nuanceCompteur}`}>
+                      {action.count}
+                    </span>
+                  )}
+                </div>
+                <div className="text-sm font-medium leading-tight">
+                  {action.label}
+                </div>
+              </button>
             ))}
           </div>
         </div>
@@ -176,7 +182,7 @@ export function TableauBord() {
 
       {/* Cartes statistiques */}
       <motion.div 
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
         variants={itemVariants}
       >
         <CounterCard
@@ -216,11 +222,11 @@ export function TableauBord() {
       {/* Section demandes urgentes */}
       {totalEnAttente > 0 && (
         <motion.div 
-          className="grid grid-cols-1 lg:grid-cols-2 gap-4"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4"
           variants={itemVariants}
         >
           {/* Conges en attente */}
-          <div className="p-5 bg-card border border-border rounded-sm">
+          <div className="p-4 sm:p-5 bg-card border border-border rounded-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <CalendarClock className="w-5 h-5 text-primary" />
@@ -246,7 +252,7 @@ export function TableauBord() {
                 {dernieresDemandesConges.map((demande) => (
                   <div 
                     key={demande.id}
-                    className="flex items-center gap-3 p-3 bg-muted/50 rounded-sm"
+                    className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-muted/50 rounded-sm"
                   >
                     <img
                       src={demande.employe?.avatar}
@@ -277,7 +283,7 @@ export function TableauBord() {
           </div>
 
           {/* Documents en attente */}
-          <div className="p-5 bg-card border border-border rounded-sm">
+          <div className="p-4 sm:p-5 bg-card border border-border rounded-sm">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold flex items-center gap-2">
                 <FileSearch className="w-5 h-5 text-success" />
@@ -303,7 +309,7 @@ export function TableauBord() {
                 {dernieresDemandesDocuments.map((demande) => (
                   <div 
                     key={demande.id}
-                    className="flex items-center gap-3 p-3 bg-muted/50 rounded-sm"
+                    className="flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-muted/50 rounded-sm"
                   >
                     <img
                       src={demande.employe?.avatar}
@@ -336,70 +342,70 @@ export function TableauBord() {
       )}
 
       {/* Graphiques */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 items-stretch">
         <motion.div 
-          className="lg:col-span-2"
+          className="lg:col-span-2 h-full"
           variants={itemVariants}
         >
           <GraphiqueEffectif donnees={stats.evolutionEffectif} />
         </motion.div>
-        <motion.div variants={itemVariants}>
+        <motion.div className="h-full" variants={itemVariants}>
           <GraphiqueDepartements donnees={stats.repartitionDepartements} />
         </motion.div>
       </div>
 
       {/* Actions rapides et demandes */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <motion.div variants={itemVariants}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 items-stretch">
+        <motion.div className="h-full" variants={itemVariants}>
           <DemandesRecentes />
         </motion.div>
-        <motion.div variants={itemVariants}>
+        <motion.div className="h-full" variants={itemVariants}>
           <EmployesEnConge />
         </motion.div>
       </div>
 
       {/* Resume du mois */}
       <motion.div
-        className="grid grid-cols-1 sm:grid-cols-4 gap-4"
+        className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4"
         variants={itemVariants}
       >
-        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
-          <div className="p-3 bg-success/10 shrink-0">
+        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
+          <div className="p-2 sm:p-3 bg-success/10 shrink-0">
             <CheckCircle className="w-5 h-5 text-success" />
           </div>
           <div className="min-w-0">
-            <p className="text-2xl font-semibold">{stats.congesApprouvesCeMois}</p>
-            <p className="text-sm text-muted-foreground truncate">Conges approuves</p>
+            <p className="text-xl sm:text-2xl font-semibold">{stats.congesApprouvesCeMois}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">Conges approuves</p>
           </div>
         </div>
         
-        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
-          <div className="p-3 bg-destructive/10 shrink-0">
+        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
+          <div className="p-2 sm:p-3 bg-destructive/10 shrink-0">
             <XCircle className="w-5 h-5 text-destructive" />
           </div>
           <div className="min-w-0">
-            <p className="text-2xl font-semibold">2</p>
-            <p className="text-sm text-muted-foreground truncate">Conges refuses</p>
+            <p className="text-xl sm:text-2xl font-semibold">2</p>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">Conges refuses</p>
           </div>
         </div>
         
-        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
-          <div className="p-3 bg-primary/10 shrink-0">
+        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
+          <div className="p-2 sm:p-3 bg-primary/10 shrink-0">
             <FileText className="w-5 h-5 text-primary" />
           </div>
           <div className="min-w-0">
-            <p className="text-2xl font-semibold">{stats.documentsTraitesCeMois}</p>
-            <p className="text-sm text-muted-foreground truncate">Documents traites</p>
+            <p className="text-xl sm:text-2xl font-semibold">{stats.documentsTraitesCeMois}</p>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">Documents traites</p>
           </div>
         </div>
         
-        <div className="p-5 bg-card border border-border min-h-[100px] flex items-center gap-4 overflow-hidden">
-          <div className="p-3 bg-warning/10 shrink-0">
+        <div className="p-4 sm:p-5 bg-card border border-border min-h-[96px] sm:min-h-[100px] flex items-center gap-3 sm:gap-4 overflow-hidden">
+          <div className="p-2 sm:p-3 bg-warning/10 shrink-0">
             <AlertCircle className="w-5 h-5 text-warning" />
           </div>
           <div className="min-w-0">
-            <p className="text-2xl font-semibold">3</p>
-            <p className="text-sm text-muted-foreground truncate">Contrats a renouveler</p>
+            <p className="text-xl sm:text-2xl font-semibold">3</p>
+            <p className="text-xs sm:text-sm text-muted-foreground truncate">Contrats a renouveler</p>
           </div>
         </div>
       </motion.div>

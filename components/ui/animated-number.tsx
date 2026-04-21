@@ -96,14 +96,14 @@ export function CounterCard({
 }: CounterCardProps) {
   return (
     <motion.div
-      className="p-5 bg-card border border-border min-h-[140px] flex flex-col justify-between hover:border-foreground/20 transition-colors duration-300 overflow-hidden"
+      className="p-4 sm:p-5 bg-card border border-border min-h-[128px] sm:min-h-[140px] flex flex-col justify-between hover:border-foreground/20 transition-colors duration-300 overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: delai, duration: 0.5 }}
       whileHover={{ y: -2 }}
     >
-      <div className="flex items-start justify-between gap-2 mb-4">
-        <div className="p-2 bg-primary/10 text-primary rounded-sm shrink-0">
+      <div className="flex items-start justify-between gap-2 mb-3 sm:mb-4">
+        <div className="p-1.5 sm:p-2 bg-primary/10 text-primary rounded-sm shrink-0">
           {icone}
         </div>
         {tendance && (
@@ -125,16 +125,16 @@ export function CounterCard({
       </div>
       
       <div className="space-y-1 min-w-0">
-        <p className="text-sm text-muted-foreground truncate">{titre}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground truncate">{titre}</p>
         <AnimatedNumber
           valeur={valeur}
           format={format}
-          className="text-2xl font-semibold text-foreground"
+          className="text-xl sm:text-2xl font-semibold text-foreground"
           decimales={format === 'pourcentage' ? 1 : 0}
         />
         {description && (
           <motion.p
-            className="text-xs text-muted-foreground mt-2 truncate"
+            className="text-[11px] sm:text-xs text-muted-foreground mt-1.5 sm:mt-2 truncate"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delai + 0.5 }}

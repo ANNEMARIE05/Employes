@@ -23,7 +23,7 @@ interface GraphiqueEffectifProps {
 export function GraphiqueEffectif({ donnees }: GraphiqueEffectifProps) {
   return (
     <motion.div
-      className="p-6 bg-card border border-border rounded-sm"
+      className="p-6 bg-card border border-border rounded-sm h-full min-h-[360px] flex flex-col"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.2 }}
@@ -39,7 +39,7 @@ export function GraphiqueEffectif({ donnees }: GraphiqueEffectifProps) {
         </div>
       </div>
 
-      <div className="h-64">
+      <div className="h-64 flex-1 min-h-[224px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={donnees}

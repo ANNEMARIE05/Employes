@@ -4,10 +4,12 @@ import { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
+import { useIsMobile } from '@/components/ui/use-mobile'
 import {
   LayoutDashboard,
   Users,
   Calendar,
+  CalendarClock,
   FileText,
   BarChart3,
   Settings,
@@ -15,6 +17,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
+  History,
   Cog,
   User,
   CalendarDays,
@@ -45,12 +48,14 @@ const elementsMenu: MenuItem[] = [
   { id: 'tableau-bord', label: 'Tableau de bord', icone: LayoutDashboard, roles: ['rh', 'manager', 'employe'] },
   { id: 'mon-profil', label: 'Mon profil', icone: User, roles: ['employe', 'manager'] },
   { id: 'mes-conges', label: 'Mes congés', icone: CalendarDays, roles: ['employe', 'manager'] },
+  { id: 'absences', label: 'Absences', icone: CalendarClock, roles: ['rh', 'manager', 'employe'] },
   { id: 'mes-documents', label: 'Mes documents', icone: FileCheck, roles: ['employe', 'manager'] },
   { id: 'employes', label: 'Employés', icone: Users, roles: ['rh', 'manager'] },
   { id: 'conges', label: 'Gestion Congés', icone: Calendar, roles: ['rh'] },
   { id: 'documents', label: 'Gestion Documents', icone: FileText, roles: ['rh'] },
   { id: 'statistiques', label: 'Statistiques', icone: BarChart3, roles: ['rh', 'manager'] },
   { id: 'notifications', label: 'Notifications', icone: Bell, roles: ['rh', 'manager', 'employe'] },
+  { id: 'historique', label: 'Historique', icone: History, roles: ['rh', 'manager', 'employe'] },
 ]
 
 const elementsSecondaires: MenuItem[] = [
@@ -73,6 +78,7 @@ export function Sidebar() {
 
   const notificationsNonLues = notifications.filter(n => !n.lu).length
   const roleUtilisateur = utilisateurConnecte?.role || 'employe'
+  const isMobile = useIsMobile()
 
   // Filtrer les menus selon le role
   const menuFiltre = useMemo(() => 
@@ -88,6 +94,9 @@ export function Sidebar() {
   // Scroll to top when changing page
   const handleChangerOnglet = (onglet: string) => {
     definirOngletActif(onglet)
+    if (isMobile && menuOuvert) {
+      basculerMenu()
+    }
     // Le scroll est gere dans page.tsx via useEffect
   }
 
@@ -112,14 +121,28 @@ export function Sidebar() {
 
   return (
     <>
+      {isMobile && menuOuvert && (
+        <button
+          aria-label="Fermer le menu"
+          className="fixed inset-0 z-30 bg-black/40"
+          onClick={basculerMenu}
+        />
+      )}
       <motion.aside
         className={cn(
           'fixed left-0 top-0 h-screen bg-sidebar text-sidebar-foreground',
           'flex flex-col border-r border-sidebar-border z-40',
-          'transition-all duration-300 ease-out'
+          'transition-all duration-300 ease-out',
+          isMobile && 'w-[85vw] max-w-[280px] shadow-xl'
         )}
         initial={false}
-        animate={{ width: menuOuvert ? 260 : 72 }}
+        animate={
+          isMobile
+            ? { x: menuOuvert ? 0 : '-100%' }
+            : { width: menuOuvert ? 260 : 72 }
+        }
+        transition={{ duration: 0.25, ease: 'easeOut' }}
+        style={{ willChange: 'transform,width' }}
       >
         {/* Logo et toggle */}
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
@@ -143,27 +166,29 @@ export function Sidebar() {
             )}
           </AnimatePresence>
           
-          {!menuOuvert && (
+          {!menuOuvert && !isMobile && (
             <div className="w-8 h-8 bg-sidebar-primary flex items-center justify-center mx-auto">
               <span className="text-sidebar-primary-foreground font-bold text-sm">M</span>
             </div>
           )}
           
-          <motion.button
-            onClick={basculerMenu}
-            className={cn(
-              'p-1.5 rounded-sm hover:bg-sidebar-accent transition-colors',
-              !menuOuvert && 'absolute -right-3 top-6 bg-sidebar border border-sidebar-border'
-            )}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {menuOuvert ? (
-              <ChevronLeft className="w-4 h-4" />
-            ) : (
-              <ChevronRight className="w-4 h-4" />
-            )}
-          </motion.button>
+          {!isMobile && (
+            <motion.button
+              onClick={basculerMenu}
+              className={cn(
+                'p-1.5 rounded-sm hover:bg-sidebar-accent transition-colors',
+                !menuOuvert && 'absolute -right-3 top-6 bg-sidebar border border-sidebar-border'
+              )}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {menuOuvert ? (
+                <ChevronLeft className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </motion.button>
+          )}
         </div>
 
         {/* Navigation principale */}
@@ -212,7 +237,7 @@ export function Sidebar() {
                 </div>
                 
                 <AnimatePresence mode="wait">
-                  {menuOuvert && (
+                  {(menuOuvert || isMobile) && (
                     <motion.span
                       className="text-sm font-medium whitespace-nowrap"
                       initial={{ opacity: 0, width: 0 }}
@@ -226,7 +251,7 @@ export function Sidebar() {
                 </AnimatePresence>
 
                 {/* Tooltip quand fermé */}
-                {!menuOuvert && (
+                {!menuOuvert && !isMobile && (
                   <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 border border-border">
                     {item.label}
                   </div>
@@ -257,7 +282,7 @@ export function Sidebar() {
               >
                 <Icone className="w-5 h-5" />
                 <AnimatePresence mode="wait">
-                  {menuOuvert && (
+                  {(menuOuvert || isMobile) && (
                     <motion.span
                       className="text-sm font-medium"
                       initial={{ opacity: 0 }}
@@ -287,7 +312,7 @@ export function Sidebar() {
                 className="w-9 h-9 rounded-sm object-cover"
               />
               <AnimatePresence mode="wait">
-                {menuOuvert && (
+                {(menuOuvert || isMobile) && (
                   <motion.div
                     className="flex-1 min-w-0"
                     initial={{ opacity: 0 }}
@@ -322,7 +347,7 @@ export function Sidebar() {
           >
             <LogOut className="w-5 h-5" />
             <AnimatePresence mode="wait">
-              {menuOuvert && (
+              {(menuOuvert || isMobile) && (
                 <motion.span
                   className="text-sm font-medium"
                   initial={{ opacity: 0 }}

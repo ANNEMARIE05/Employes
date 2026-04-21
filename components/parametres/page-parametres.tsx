@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Loader } from '@/components/ui/loader'
+import { useAppStore } from '@/store/useAppStore'
 
 type OngletParametres = 'profil' | 'notifications' | 'securite' | 'apparence' | 'recherche'
 
@@ -31,8 +32,13 @@ const onglets: { id: OngletParametres; label: string; icone: React.ReactNode }[]
 ]
 
 export function PageParametres() {
+  const utilisateurConnecte = useAppStore((state) => state.utilisateurConnecte)
   const [ongletActif, setOngletActif] = useState<OngletParametres>('profil')
   const [chargement, setChargement] = useState(false)
+  const estEmploye = utilisateurConnecte?.role === 'employe'
+  const ongletsDisponibles = estEmploye
+    ? onglets.filter((onglet) => onglet.id !== 'recherche')
+    : onglets
 
   const handleSave = async () => {
     setChargement(true)
@@ -48,7 +54,7 @@ export function PageParametres() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        {onglets.map((onglet) => (
+        {ongletsDisponibles.map((onglet) => (
           <button
             key={onglet.id}
             onClick={() => setOngletActif(onglet.id)}
@@ -77,7 +83,7 @@ export function PageParametres() {
         {ongletActif === 'notifications' && <SectionNotifications />}
         {ongletActif === 'securite' && <SectionSecurite />}
         {ongletActif === 'apparence' && <SectionApparence />}
-        {ongletActif === 'recherche' && <SectionRecherche />}
+        {!estEmploye && ongletActif === 'recherche' && <SectionRecherche />}
       </motion.div>
 
       {/* Bouton sauvegarder */}

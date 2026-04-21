@@ -36,7 +36,7 @@ export function GraphiqueDepartements({ donnees }: GraphiquePartementsProps) {
 
   return (
     <motion.div
-      className="p-6 bg-card border border-border rounded-sm h-full"
+      className="p-6 bg-card border border-border rounded-sm h-full min-h-[360px] flex flex-col"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
@@ -46,7 +46,7 @@ export function GraphiqueDepartements({ donnees }: GraphiquePartementsProps) {
         <p className="text-sm text-muted-foreground">Effectif actuel</p>
       </div>
 
-      <div className="h-56">
+      <div className="h-56 flex-1 min-h-[224px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={donneesTries}

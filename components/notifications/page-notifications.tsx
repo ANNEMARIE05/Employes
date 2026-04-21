@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   Bell, 
@@ -12,56 +12,13 @@ import {
   CheckCircle,
   XCircle,
   Filter,
+  Search,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAppStore } from '@/store/useAppStore'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
 import type { Notification } from '@/types'
-
-// Notifications de démonstration
-const notificationsMock: Notification[] = [
-  {
-    id: '1',
-    titre: 'Demande de congé approuvée',
-    message: 'Votre demande de congé du 25 au 30 avril a été approuvée par Marie Dubois.',
-    type: 'succes',
-    lu: false,
-    dateCreation: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 min ago
-  },
-  {
-    id: '2',
-    titre: 'Nouveau document disponible',
-    message: "Votre attestation d'emploi est prête à être téléchargée.",
-    type: 'info',
-    lu: false,
-    dateCreation: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2h ago
-  },
-  {
-    id: '3',
-    titre: 'Rappel : Entretien annuel',
-    message: 'Votre entretien annuel est prévu pour le 15 mai 2026.',
-    type: 'avertissement',
-    lu: true,
-    dateCreation: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-  },
-  {
-    id: '4',
-    titre: 'Demande de RTT refusée',
-    message: 'Votre demande de RTT pour le 28 avril a été refusée. Motif : effectif insuffisant.',
-    type: 'erreur',
-    lu: true,
-    dateCreation: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(), // 2 days ago
-  },
-  {
-    id: '5',
-    titre: 'Bienvenue sur RH Élite',
-    message: 'Votre compte a été créé avec succès. Découvrez toutes les fonctionnalités.',
-    type: 'info',
-    lu: true,
-    dateCreation: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(), // 3 days ago
-  },
-]
 
 const ICONES_TYPE = {
   info: Info,
@@ -80,33 +37,40 @@ const STYLES_TYPE = {
 type FiltreType = 'tous' | 'non_lu' | Notification['type']
 
 export function PageNotifications() {
-  const [notifications, setNotifications] = useState(notificationsMock)
+  const { notifications, utilisateurConnecte, marquerCommeLu, supprimerNotification, definirNotifications } = useAppStore()
   const [filtre, setFiltre] = useState<FiltreType>('tous')
+  const [recherche, setRecherche] = useState('')
 
-  const notificationsNonLues = notifications.filter(n => !n.lu).length
+  const notificationsUtilisateur = useMemo(
+    () => notifications.filter((n) => !n.destinataireId || n.destinataireId === utilisateurConnecte?.id),
+    [notifications, utilisateurConnecte?.id]
+  )
 
-  // Filtrer
-  const notificationsFiltrees = notifications.filter(notif => {
-    if (filtre === 'tous') return true
-    if (filtre === 'non_lu') return !notif.lu
-    return notif.type === filtre
-  })
+  const notificationsNonLues = notificationsUtilisateur.filter(n => !n.lu).length
 
-  // Marquer comme lu
-  const marquerCommeLu = (id: string) => {
-    setNotifications(prev => 
-      prev.map(n => n.id === id ? { ...n, lu: true } : n)
-    )
-  }
+  const stats = useMemo(() => ({
+    total: notificationsUtilisateur.length,
+    nonLues: notificationsNonLues,
+    alertes: notificationsUtilisateur.filter(n => n.type === 'avertissement' || n.type === 'erreur').length,
+  }), [notificationsUtilisateur, notificationsNonLues])
 
-  // Tout marquer comme lu
+  const notificationsFiltrees = useMemo(() => notificationsUtilisateur.filter((notif) => {
+    const correspondFiltre =
+      filtre === 'tous' ||
+      (filtre === 'non_lu' ? !notif.lu : notif.type === filtre)
+    const texte = `${notif.titre} ${notif.message}`.toLowerCase()
+    const correspondRecherche = !recherche || texte.includes(recherche.toLowerCase())
+    return correspondFiltre && correspondRecherche
+  }), [notificationsUtilisateur, filtre, recherche])
+
   const toutMarquerCommeLu = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, lu: true })))
+    notificationsUtilisateur.filter((n) => !n.lu).forEach((n) => marquerCommeLu(n.id))
   }
 
-  // Supprimer
-  const supprimer = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id))
+  const toutSupprimer = () => {
+    definirNotifications(
+      notifications.filter((n) => n.destinataireId && n.destinataireId !== utilisateurConnecte?.id)
+    )
   }
 
   const filtres: { id: FiltreType; label: string }[] = [
@@ -118,7 +82,7 @@ export function PageNotifications() {
   ]
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <motion.div
         className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
@@ -153,13 +117,44 @@ export function PageNotifications() {
         )}
       </motion.div>
 
-      {/* Filtres */}
+      {/* Stats */}
       <motion.div
-        className="flex flex-wrap gap-2"
+        className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <div className="p-4 bg-card border border-border rounded-sm">
+          <p className="text-sm text-muted-foreground">Total</p>
+          <p className="text-2xl font-semibold">{stats.total}</p>
+        </div>
+        <div className="p-4 bg-card border border-border rounded-sm">
+          <p className="text-sm text-muted-foreground">Non lues</p>
+          <p className="text-2xl font-semibold text-primary">{stats.nonLues}</p>
+        </div>
+        <div className="p-4 bg-card border border-border rounded-sm">
+          <p className="text-sm text-muted-foreground">Alertes</p>
+          <p className="text-2xl font-semibold text-warning">{stats.alertes}</p>
+        </div>
+      </motion.div>
+
+      {/* Recherche et filtres */}
+      <motion.div
+        className="flex flex-wrap gap-3 items-center"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
       >
+        <div className="relative flex-1 min-w-[220px] max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={recherche}
+            onChange={(e) => setRecherche(e.target.value)}
+            placeholder="Rechercher une notification..."
+            className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-sm text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+          />
+        </div>
+
         {filtres.map((f) => (
           <button
             key={f.id}
@@ -174,6 +169,18 @@ export function PageNotifications() {
             {f.label}
           </button>
         ))}
+
+        {notificationsUtilisateur.length > 0 && (
+          <motion.button
+            onClick={toutSupprimer}
+            className="ml-auto flex items-center gap-2 px-3 py-2 text-sm rounded-sm border border-destructive/30 text-destructive hover:bg-destructive/10 transition-colors"
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Trash2 className="w-4 h-4" />
+            Vider
+          </motion.button>
+        )}
       </motion.div>
 
       {/* Liste */}
@@ -244,7 +251,7 @@ export function PageNotifications() {
                           </motion.button>
                         )}
                         <motion.button
-                          onClick={() => supprimer(notif.id)}
+                          onClick={() => supprimerNotification(notif.id)}
                           className="p-2 hover:bg-destructive/10 rounded-sm transition-colors"
                           whileHover={{ scale: 1.1 }}
                           whileTap={{ scale: 0.95 }}

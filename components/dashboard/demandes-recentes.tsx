@@ -18,6 +18,7 @@ import {
 } from '@/types'
 import { formatDistanceToNow } from 'date-fns'
 import { fr } from 'date-fns/locale'
+import { useAppStore } from '@/store/useAppStore'
 
 type TypeDemande = 'conge' | 'document'
 
@@ -35,6 +36,8 @@ interface DemandeUnifiee {
 }
 
 export function DemandesRecentes() {
+  const { definirOngletActif } = useAppStore()
+
   // Fusionner et trier les demandes
   const congesEnrichis = enrichirDemandesConges(demandesCongesMock)
   const documentsEnrichis = enrichirDemandesDocuments(demandesDocumentsMock)
@@ -70,7 +73,7 @@ export function DemandesRecentes() {
 
   return (
     <motion.div
-      className="p-6 bg-card border border-border rounded-sm"
+      className="p-6 bg-card border border-border rounded-sm h-full min-h-[420px] flex flex-col"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
@@ -80,12 +83,15 @@ export function DemandesRecentes() {
           <h3 className="text-base font-semibold">Demandes récentes</h3>
           <p className="text-sm text-muted-foreground">Toutes les demandes</p>
         </div>
-        <button className="text-sm text-primary hover:underline flex items-center gap-1">
+        <button
+          onClick={() => definirOngletActif('historique')}
+          className="text-sm text-primary hover:underline flex items-center gap-1"
+        >
           Voir tout <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 flex-1">
         {demandesUnifiees.map((demande, index) => (
           <motion.div
             key={demande.id}

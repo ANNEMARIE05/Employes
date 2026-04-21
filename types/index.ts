@@ -72,6 +72,7 @@ export interface Notification {
   type: 'info' | 'succes' | 'avertissement' | 'erreur'
   lu: boolean
   dateCreation: string
+  destinataireId?: string
   lien?: string
 }
 
