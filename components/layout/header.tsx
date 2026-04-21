@@ -3,9 +3,19 @@
 import { motion } from 'framer-motion'
 import { useAppStore } from '@/store/useAppStore'
 import { cn } from '@/lib/utils'
-import { Search, Bell, Plus } from 'lucide-react'
+import { Search, Bell, Plus, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { formatDistanceToNow } from 'date-fns'
+import { fr } from 'date-fns/locale'
 
 const titresPages: Record<string, { titre: string; description: string }> = {
   'tableau-bord': { 
@@ -47,7 +57,7 @@ interface HeaderProps {
 }
 
 export function Header({ onNouvelleDemande }: HeaderProps) {
-  const { ongletActif, menuOuvert, notifications, utilisateurConnecte } = useAppStore()
+  const { ongletActif, menuOuvert, notifications, utilisateurConnecte, marquerCommeLu, definirOngletActif } = useAppStore()
   const [rechercheOuverte, setRechercheOuverte] = useState(false)
   
   const pageInfo = titresPages[ongletActif] || { titre: 'RH Élite', description: '' }
@@ -64,7 +74,7 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
   return (
     <motion.header
       className={cn(
-        'fixed top-0 right-0 h-16 bg-background/80 backdrop-blur-md',
+        'fixed top-0 right-0 h-16 bg-white',
         'border-b border-border z-30 flex items-center justify-between px-6',
         'transition-all duration-300'
       )}
@@ -136,22 +146,78 @@ export function Header({ onNouvelleDemande }: HeaderProps) {
           )}
         </motion.div>
 
-        {/* Notifications */}
-        <motion.button
-          className="relative p-2.5 text-muted-foreground hover:text-foreground transition-colors rounded-sm hover:bg-muted"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Bell className="w-4 h-4" />
-          {notificationsNonLues > 0 && (
-            <motion.span
-              className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 500 }}
-            />
-          )}
-        </motion.button>
+        {/* Notifications Dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <motion.button
+              className="relative p-2.5 text-muted-foreground hover:text-foreground transition-colors rounded-sm hover:bg-muted"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Bell className="w-4 h-4" />
+              {notificationsNonLues > 0 && (
+                <motion.span
+                  className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 500 }}
+                />
+              )}
+            </motion.button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuLabel className="flex items-center justify-between">
+              <span>Notifications</span>
+              {notificationsNonLues > 0 && (
+                <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-sm">
+                  {notificationsNonLues} non lue{notificationsNonLues > 1 ? 's' : ''}
+                </span>
+              )}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {notifications.length === 0 ? (
+              <div className="py-6 text-center text-sm text-muted-foreground">
+                Aucune notification
+              </div>
+            ) : (
+              <div className="max-h-[300px] overflow-y-auto">
+                {notifications.slice(0, 5).map((notification) => (
+                  <DropdownMenuItem
+                    key={notification.id}
+                    className={cn(
+                      'flex flex-col items-start gap-1 p-3 cursor-pointer',
+                      !notification.lu && 'bg-primary/5'
+                    )}
+                    onClick={() => marquerCommeLu(notification.id)}
+                  >
+                    <div className="flex items-start justify-between w-full gap-2">
+                      <span className="font-medium text-sm">{notification.titre}</span>
+                      {!notification.lu && (
+                        <span className="w-2 h-2 bg-primary rounded-full shrink-0 mt-1.5" />
+                      )}
+                    </div>
+                    <span className="text-xs text-muted-foreground line-clamp-2">
+                      {notification.message}
+                    </span>
+                    <span className="text-xs text-muted-foreground/70">
+                      {formatDistanceToNow(new Date(notification.dateCreation), { 
+                        addSuffix: true, 
+                        locale: fr 
+                      })}
+                    </span>
+                  </DropdownMenuItem>
+                ))}
+              </div>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="justify-center text-primary cursor-pointer"
+              onClick={() => definirOngletActif('notifications')}
+            >
+              Voir toutes les notifications
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* Bouton nouvelle demande */}
         {(ongletActif === 'conges' || ongletActif === 'documents') && (

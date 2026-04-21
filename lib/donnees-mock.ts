@@ -3,7 +3,8 @@ import type {
   DemandeConge, 
   DemandeDocument, 
   StatistiquesRH,
-  Departement 
+  Departement,
+  Notification 
 } from '@/types'
 
 // Employés fictifs avec photos Unsplash
@@ -303,6 +304,50 @@ export const statistiquesMock: StatistiquesRH = {
     { type: 'Exceptionnel', nombre: 5 },
   ],
 }
+
+// Notifications mock
+export const notificationsMock: Notification[] = [
+  {
+    id: 'n1',
+    titre: 'Nouvelle demande de congé',
+    message: 'Thomas Martin a soumis une demande de RTT pour le 28 avril.',
+    type: 'info',
+    lu: false,
+    dateCreation: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 min ago
+  },
+  {
+    id: 'n2',
+    titre: 'Demande approuvée',
+    message: 'Votre demande de congé du 25 avril au 2 mai a été approuvée.',
+    type: 'succes',
+    lu: false,
+    dateCreation: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+  },
+  {
+    id: 'n3',
+    titre: 'Document disponible',
+    message: 'Votre fiche de paie de mars est maintenant disponible au téléchargement.',
+    type: 'info',
+    lu: true,
+    dateCreation: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+  },
+  {
+    id: 'n4',
+    titre: 'Rappel: Solde de congés',
+    message: 'Il vous reste 18 jours de congés à prendre avant la fin de l\'année.',
+    type: 'avertissement',
+    lu: true,
+    dateCreation: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
+  },
+  {
+    id: 'n5',
+    titre: 'Demande de document',
+    message: 'Lucas Petit a demandé un certificat de travail.',
+    type: 'info',
+    lu: false,
+    dateCreation: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 min ago
+  },
+]
 
 // Fonction utilitaire pour enrichir les demandes avec les infos employé
 export function enrichirDemandesConges(demandes: DemandeConge[]): DemandeConge[] {

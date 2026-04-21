@@ -17,7 +17,7 @@ import { PageConnexion } from '@/components/auth/page-connexion'
 import { LoaderPleinEcran } from '@/components/ui/loader'
 import { FormulaireConge } from '@/components/conges/formulaire-conge'
 import { FormulaireDocument } from '@/components/documents/formulaire-document'
-import { employesMock } from '@/lib/donnees-mock'
+import { employesMock, notificationsMock } from '@/lib/donnees-mock'
 import { cn } from '@/lib/utils'
 
 export default function Application() {
@@ -32,6 +32,7 @@ export default function Application() {
     utilisateurConnecte,
     estAuthentifie,
     deconnecter,
+    definirNotifications,
   } = useAppStore()
 
   // Simulation chargement initial
@@ -60,6 +61,7 @@ export default function Application() {
       : employesMock[1]
     
     definirUtilisateur(utilisateur)
+    definirNotifications(notificationsMock)
   }
 
   // Gestion nouvelle demande
